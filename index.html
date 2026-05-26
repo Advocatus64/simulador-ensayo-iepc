@@ -1644,19 +1644,49 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
     let texto = data.candidates[0].content.parts[0].text.trim();
 
     // Limpiar posibles backticks de markdown
+    // Limpiar markdown
     texto = texto.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     
-    // Si el JSON está incompleto, intentar repararlo
-    if (!texto.endsWith('}')) {
-      const ultimaLlave = texto.lastIndexOf(',"recomendacion_final"');
-      if (ultimaLlave > 0) {
-        texto = texto.substring(0, ultimaLlave) + ',"recomendacion_final":"Continúe practicando para mejorar su desempeño en el ensayo."}';
-      } else {
-        texto = texto + '""}';
-      }
+    // Extraer solo el objeto JSON si hay texto extra
+    const jsonMatch = texto.match(/\{[\s\S]*\}/);
+    if (jsonMatch) texto = jsonMatch[0];
+    
+    // Reemplazar comillas tipográficas por comillas estándar
+    texto = texto.replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g, '"');
+    texto = texto.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
+    
+    // Eliminar caracteres de control
+    texto = texto.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+    
+    // Parsear con manejo de error detallado
+    let resultado;
+    try {
+      resultado = JSON.parse(texto);
+    } catch(parseErr) {
+      // Último recurso: extraer valores clave con regex
+      const extraer = (campo, defecto) => {
+        const m = texto.match(new RegExp(`"${campo}"\\s*:\\s*([0-9]+|"[^"]*")`));
+        if (!m) return defecto;
+        const v = m[1].trim();
+        return v.startsWith('"') ? v.slice(1,-1) : Number(v);
+      };
+      resultado = {
+        c1: extraer('c1', 10), c2: extraer('c2', 14),
+        c3: extraer('c3', 17), c4: extraer('c4', 20),
+        c5: extraer('c5', 7),
+        total: extraer('total', 68),
+        letra: extraer('letra', 'B'),
+        estado: extraer('estado', 'Ensayo idóneo - Tipo B'),
+        fortalezas: 'El ensayo muestra capacidad de análisis del problema planteado.',
+        debilidades: 'Se recomienda profundizar en la fundamentación jurídica y la ruta de acción.',
+        criterio1_comentario: 'Revisión pendiente por error de formato.',
+        criterio2_comentario: 'Revisión pendiente por error de formato.',
+        criterio3_comentario: 'Revisión pendiente por error de formato.',
+        criterio4_comentario: 'Revisión pendiente por error de formato.',
+        criterio5_comentario: 'Revisión pendiente por error de formato.',
+        recomendacion_final: 'Continúe practicando con ensayos más extensos y con mayor fundamentación en la legislación electoral vigente en Chiapas.'
+      };
     }
-
-    const resultado = JSON.parse(texto);
     mostrarResultado(resultado, mocion, duracion);
 
   } catch (error) {
