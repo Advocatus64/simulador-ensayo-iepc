@@ -954,7 +954,106 @@ body {
   font-style: italic;
 }
 
-/* Pantallas ocultas */
+/* ── MODAL SELECTOR DE EJERCICIO ── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--blanco);
+  border-radius: 4px;
+  max-width: 650px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.modal-header {
+  background: var(--verde);
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+}
+
+.modal-header h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--oro-claro);
+  font-size: 1rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.25rem;
+}
+
+.modal-close:hover { color: white; }
+
+.ejercicio-lista {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ejercicio-item {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--crema-oscuro);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.ejercicio-item:hover {
+  background: var(--verde-palido);
+  border-color: var(--verde-claro);
+}
+
+.ejercicio-item.activo {
+  background: var(--verde-palido);
+  border-color: var(--verde);
+}
+
+.ejercicio-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--verde);
+  font-weight: 600;
+  min-width: 24px;
+  padding-top: 0.1rem;
+}
+
+.ejercicio-info-titulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cafe);
+  line-height: 1.3;
+}
+
+.ejercicio-info-cat {
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+  font-style: italic;
+  margin-top: 0.2rem;
+}
 .hidden { display: none !important; }
 </style>
 </head>
@@ -1124,7 +1223,12 @@ body {
             <h2>Moción para análisis</h2>
             <p>Lea con atención antes de redactar su ensayo</p>
           </div>
-          <div class="contador-ejercicios" id="contador-ejercicio">Ejercicio 1 de 10</div>
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <button onclick="mostrarSelectorEjercicio()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:var(--oro-claro); padding:0.35rem 0.75rem; border-radius:3px; font-family:'JetBrains Mono',monospace; font-size:0.72rem; cursor:pointer; letter-spacing:0.05em;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+              Cambiar ejercicio ↕
+            </button>
+            <div class="contador-ejercicios" id="contador-ejercicio">Ejercicio 1 de 22</div>
+          </div>
         </div>
         <div class="mocion-categoria" id="mocion-categoria">Categoría</div>
         <div class="mocion-texto">
@@ -1276,6 +1380,19 @@ body {
   </div>
 </div>
 
+<!-- ══ MODAL SELECTOR DE EJERCICIO ══ -->
+<div id="modal-selector" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Seleccionar ejercicio</h3>
+      <button class="modal-close" onclick="cerrarSelector()">✕</button>
+    </div>
+    <div class="ejercicio-lista" id="ejercicio-lista">
+      <!-- Se llena dinámicamente -->
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════════════
 // CONFIGURACIÓN
@@ -1357,6 +1474,91 @@ const MOCIONES = [
     texto: `A tres semanas de las elecciones municipales en los municipios de Pichucalco, Reforma e Ixhuatán, la Secretaría Técnica del IEPC recibe en un período de cinco días un total de 47 denuncias ciudadanas individuales, debidamente documentadas con nombre, domicilio y firma de los denunciantes, en las que se señala que funcionarios de los tres ayuntamientos —todos gobernados por el mismo partido— están condicionando de manera directa la entrega de apoyos económicos y despensas del programa estatal "Chiapas Contigo" a la asistencia obligatoria a mítines del candidato del partido gobernante y a la exhibición del voto mediante fotografía el día de la jornada. Se cuenta con 23 videos grabados en teléfono celular en los que se escucha a promotores del programa amenazar a beneficiarios con la suspensión de sus apoyos si no asisten a los eventos de campaña. En al menos cuatro casos, los denunciantes reportan haber recibido visitas domiciliarias de personal municipal para "verificar su apoyo al candidato". Paralelamente, 11 denuncias separadas señalan que vehículos de las tres presidencias municipales, con placas oficiales identificadas, han sido utilizados para transportar personas a mítines de campaña y para distribuir propaganda electoral en horario laboral. El Secretario del Ayuntamiento de Pichucalco declaró públicamente ante medios que "todo es una mentira fabricada por la oposición desesperada", mientras el director del programa estatal en la región guardó silencio. La coalición opositora Chiapas al Frente convocó a una conferencia de prensa con los denunciantes y entregó copia de todas las pruebas al IEPC y a la Fiscalía Electoral.`,
     contexto: `La Zona Norte de Chiapas es una de las regiones con mayor índice de dependencia de programas sociales del estado, con una alta proporción de la población en situación de pobreza extrema. El partido denunciado lleva 12 años consecutivos gobernando los tres municipios y tiene un control político histórico de la región. Las 47 denuncias fueron coordinadas y organizadas por la coalición opositora, lo que puede ser un elemento a considerar al valorar la sistematicidad de la denuncia, aunque no invalida el contenido de las mismas. El INE, a través de su Junta Local Ejecutiva en Chiapas, ha señalado en un comunicado interno que la competencia sancionadora en materia de programas sociales de origen estatal recae en el IEPC conforme al artículo 25 del Código Electoral de Chiapas. Los medios locales tienen amplia cobertura del caso y hay presión pública para que el IEPC actúe con rapidez. Los plazos electorales son estrechos y la resolución de un procedimiento sancionador de esta magnitud podría extenderse más allá del día de la elección.`,
     pregunta: `Como Consejero Electoral del IEPC, analice integralmente la denuncia de uso indebido de programas sociales de origen estatal con fines electorales, identifique el marco legal aplicable —incluyendo la Ley General en Materia de Delitos Electorales, el Código Electoral de Chiapas y los criterios del TEPJF sobre equidad en la contienda—, evalúe el valor probatorio de las pruebas presentadas y los riesgos que esta situación representa para la equidad de la contienda y la validez de la elección, y proponga la ruta completa del procedimiento administrativo sancionador que corresponde iniciar, incluyendo medidas cautelares, plazos procesales, coordinación interinstitucional y posibles sanciones aplicables.`
+  },
+  // ── MOCIONES 11-22: ANÁLISIS TEÓRICO-JURÍDICO ──
+  {
+    categoria: 'G — Arquitectura institucional electoral',
+    titulo: 'Balance entre centralización y autonomía: INE y OPLE',
+    texto: `La evolución de los órganos electorales en México ha estado marcada por una tensión constante entre la necesidad de centralización para garantizar estándares mínimos y la necesidad de descentralización para reflejar las particularidades sociopolíticas de cada entidad federativa. Esta tensión se ha materializado en un modelo mixto que distribuye funciones entre el INE y los Organismos Públicos Locales (OPLE), sin que ello suponga una subordinación jerárquica absoluta. Los OPLE, al estar constitucionalmente reconocidos, cuentan con atribuciones técnicas y operativas específicas que no dependen de la voluntad del órgano nacional, aunque deben ceñirse a lineamientos y coordinación interinstitucional. Esta arquitectura busca equilibrar la homogeneidad normativa con la flexibilidad operativa, lo que permite adaptar la implementación de políticas electorales a las realidades locales. Sin embargo, diversos informes han documentado una creciente tendencia hacia la recentralización fáctica de funciones clave, particularmente en materia de fiscalización, selección de consejerías y supervisión operativa. Aunque esta dinámica busca garantizar profesionalismo y control, también ha generado tensiones respecto al principio de autonomía constitucional de los OPLE. El desafío actual del sistema electoral mexicano no es únicamente técnico, sino profundamente político e institucional: ¿cómo lograr un balance funcional entre unidad normativa y autonomía operativa sin vulnerar la soberanía local ni sacrificar la equidad y transparencia electoral? Esta pregunta sigue abierta, y su resolución definirá el futuro del modelo electoral nacional.`,
+    contexto: `El IEPC Chiapas opera en este contexto de tensión institucional. En el último año, el INE ha emitido tres instrucciones vinculantes al IEPC en materia de fiscalización y capacitación que han sido cuestionadas por dos consejeros locales como "invasión de competencias". Simultáneamente, organizaciones civiles han señalado que algunas decisiones operativas del IEPC carecen de los estándares nacionales. El Congreso local ha abierto un foro de consulta sobre el modelo de coordinación INE-IEPC en Chiapas.`,
+    pregunta: `Como Consejero Electoral del IEPC Chiapas, analice la tensión entre centralización normativa y autonomía operativa en el modelo electoral mexicano, identifique cómo se manifiesta este dilema en el contexto específico de Chiapas, evalúe los riesgos institucionales de ambos extremos, y proponga una posición institucional del IEPC que defienda su autonomía constitucional sin comprometer los estándares nacionales de calidad electoral.`
+  },
+  {
+    categoria: 'G — Arquitectura institucional electoral',
+    titulo: 'Paridad de género: avances normativos y resistencias estructurales',
+    texto: `En México, el principio de paridad de género ha sido objeto de múltiples reformas legislativas y constitucionales, orientadas a garantizar la igualdad sustantiva en el acceso a cargos públicos. A pesar de los avances normativos, persisten desafíos estructurales relacionados con la simulación, la violencia política contra las mujeres en razón de género y los mecanismos informales que obstaculizan el ejercicio efectivo del cargo. La legislación electoral establece la obligación de los partidos políticos de postular al menos 50% de candidaturas de mujeres, tanto en cargos uninominales como plurinominales. Sin embargo, en algunos contextos locales, estas disposiciones son eludidas mediante prácticas como las renuncias inducidas, las candidaturas simuladas o el desplazamiento informal de funciones en el ejercicio del poder. Diversos fallos del Tribunal Electoral del Poder Judicial de la Federación han establecido precedentes importantes para combatir estas prácticas, como el reconocimiento de la violencia simbólica y la invalidación de registros cuando se comprueba la intención de fraude a la ley. Estas resoluciones han fortalecido el bloque de constitucionalidad en materia de derechos político-electorales. No obstante, los criterios jurisdiccionales aún enfrentan resistencias políticas, especialmente cuando colisionan con los intereses de las élites locales o los acuerdos de cúpula. El reto actual consiste en consolidar una cultura institucional que no solo cumpla la ley formalmente, sino que asuma el principio de paridad como un componente estructural del modelo democrático mexicano.`,
+    contexto: `En Chiapas, el proceso electoral en curso ha registrado tres denuncias formales por candidaturas simuladas de mujeres en municipios de Los Altos, Frailesca y Sierra Madre. En dos casos, las candidatas habrían firmado cartas de renuncia anticipada antes de ser registradas. El IEPC tiene en sus manos la decisión de admitir o rechazar estas denuncias antes del cierre del registro de candidaturas.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice el estado actual del principio de paridad de género en el proceso electoral chiapaneco, identifique las prácticas de simulación documentadas y el marco jurídico aplicable para combatirlas, evalúe los riesgos de actuar o no actuar ante las denuncias presentadas, y proponga una estrategia institucional integral para garantizar la paridad sustantiva en el proceso en curso.`
+  },
+  {
+    categoria: 'H — Gobernanza y principios electorales',
+    titulo: 'Gobernanza electoral: coordinación institucional y legitimidad democrática',
+    texto: `La gobernanza electoral se refiere al conjunto de normas, instituciones, actores y procedimientos que rigen la organización de elecciones libres, auténticas y periódicas. No se limita a la administración del proceso electoral, sino que abarca aspectos estructurales como el diseño normativo, la participación ciudadana, la transparencia en la fiscalización de recursos y la resolución de controversias. En contextos federales como el mexicano, la gobernanza electoral exige mecanismos eficaces de coordinación entre autoridades nacionales y locales. La existencia del INE y los OPLE responde a un modelo cooperativo de competencias que, en la práctica, puede verse afectado por tensiones políticas, interpretaciones dispares y asimetrías de recursos. La legitimidad de una elección no depende únicamente del resultado ni de la asistencia ciudadana, sino de la percepción pública sobre la imparcialidad de las autoridades electorales y la equidad de la contienda. De ahí que la gobernanza electoral no solo sea un tema técnico, sino profundamente político, ético y comunicacional. Fortalecer la gobernanza democrática implica repensar los incentivos institucionales, reducir la discrecionalidad partidista y robustecer las capacidades de vigilancia, denuncia y auditoría ciudadana. La confianza pública no se decreta: se construye con reglas claras, actores legítimos y procesos verificables.`,
+    contexto: `El IEPC Chiapas enfrenta un contexto de baja confianza ciudadana: una encuesta reciente del INEGI indica que solo el 38% de la ciudadanía chiapaneca confía en las autoridades electorales locales. Tres partidos políticos han cuestionado públicamente la imparcialidad del Consejo General en las últimas semanas. El INE ha solicitado al IEPC un informe sobre sus mecanismos de transparencia y comunicación institucional.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice los factores que inciden en la legitimidad democrática del proceso electoral chiapaneco, identifique las debilidades de gobernanza que han contribuido a la baja confianza ciudadana, evalúe los riesgos para la estabilidad del proceso y proponga un plan de acción institucional que fortalezca la transparencia, la coordinación interinstitucional y la comunicación con la ciudadanía.`
+  },
+  {
+    categoria: 'H — Gobernanza y principios electorales',
+    titulo: 'Servicio Profesional Electoral Nacional: autonomía técnica y presiones políticas',
+    texto: `La profesionalización del servicio electoral ha sido una de las reformas más trascendentes en la historia reciente del sistema político mexicano. Su origen puede rastrearse en las exigencias de imparcialidad, autonomía y especialización que emergieron en la década de los noventa, como respuesta a décadas de desconfianza ciudadana y de control gubernamental sobre los comicios. La creación de un Servicio Profesional Electoral Nacional (SPEN), así como de cuerpos técnicos permanentes dentro del INE y los OPLE, permitió consolidar criterios meritocráticos en la selección y permanencia del personal, alejando al menos formalmente los nombramientos de las lógicas clientelares o partidistas. La estandarización de perfiles, la capacitación continua y la movilidad controlada son elementos centrales de este proceso. No obstante, diversas evaluaciones han advertido de riesgos latentes: tensiones entre órganos centrales y juntas locales, duplicidad de funciones, resistencia de actores políticos a respetar el escalafón y, en algunos casos, intentos de captura institucional a través de presiones internas disfrazadas de reformas administrativas. En este contexto, el desafío no es únicamente preservar al SPEN como mecanismo técnico, sino dotarlo de blindajes institucionales que le permitan sostener su neutralidad ante los ciclos políticos. La profesionalización no puede entenderse como una meta alcanzada, sino como un proceso inacabado que requiere vigilancia, ajustes normativos y una ética institucional transversal.`,
+    contexto: `En la Junta Distrital 05 del IEPC Chiapas, el Vocal Ejecutivo ha denunciado presiones de un consejero para promover a un funcionario que no cumple el perfil del SPEN, argumentando "necesidades operativas urgentes". El caso ha llegado al pleno del Consejo General y ha sido reportado por medios locales como un posible caso de nepotismo.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice el caso concreto de presunta violación al SPEN en la Junta Distrital 05, identifique el marco normativo aplicable y las responsabilidades institucionales del Consejo General, evalúe los riesgos para la integridad del servicio civil electoral y proponga la ruta de acción para resolver el caso preservando los principios de mérito, imparcialidad y legalidad.`
+  },
+  {
+    categoria: 'H — Gobernanza y principios electorales',
+    titulo: 'Fiscalización electoral: equidad en la contienda y recursos ilícitos',
+    texto: `La fiscalización electoral constituye un pilar del sistema democrático, en tanto permite controlar el origen, monto y destino de los recursos utilizados en las campañas. Esta tarea, encomendada al INE a través de la Unidad Técnica de Fiscalización, busca garantizar equidad en la competencia política y prevenir el uso indebido de recursos públicos o de procedencia ilícita. Sin embargo, el proceso de fiscalización enfrenta importantes desafíos técnicos y estructurales. La disparidad de capacidades entre partidos, la opacidad en ciertas transferencias financieras y el uso de esquemas paralelos —como redes de facturación simulada— dificultan la verificación efectiva del gasto real, especialmente a nivel local. En respuesta, el INE ha desarrollado herramientas digitales como el Sistema Integral de Fiscalización (SIF), que permite monitorear en tiempo real las operaciones financieras reportadas por los partidos. A pesar de estos avances, los mecanismos de vigilancia ciudadana siguen siendo limitados y dependen en gran medida de la proactividad de organizaciones civiles. La consolidación de un modelo fiscalizador eficaz no solo implica mejorar la tecnología de seguimiento, sino también robustecer la cultura de rendición de cuentas entre actores políticos y fortalecer los vínculos entre fiscalización, justicia administrativa y sanción efectiva. Sin consecuencias claras, la fiscalización se convierte en un mero trámite.`,
+    contexto: `La Unidad de Fiscalización del IEPC Chiapas detectó que dos partidos políticos presentaron informes de gastos de precampaña con inconsistencias graves: montos declarados que no coinciden con la actividad observable en redes sociales y espectaculares. Los partidos argumentan "errores administrativos". El plazo para presentar observaciones vence en 72 horas.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice las inconsistencias detectadas en los informes de fiscalización de precampaña, identifique el marco jurídico y procedimental aplicable, evalúe los distintos escenarios de respuesta institucional y sus consecuencias para la equidad de la contienda, y proponga la ruta de acción que el IEPC debe seguir para garantizar una fiscalización efectiva y con consecuencias reales.`
+  },
+  {
+    categoria: 'H — Gobernanza y principios electorales',
+    titulo: 'Autonomía de los OPLE: presiones presupuestales y captura institucional',
+    texto: `La autonomía de los organismos electorales ha sido uno de los avances más relevantes en la transición democrática mexicana. Esta condición jurídica busca garantizar que las decisiones en materia electoral no estén subordinadas a intereses partidistas o gubernamentales, permitiendo que las autoridades electorales actúen con imparcialidad, legalidad y certeza. Sin embargo, la autonomía formal no garantiza por sí sola la independencia operativa. En múltiples entidades federativas, los OPLE enfrentan presiones presupuestales, intentos de captura a través de los nombramientos y campañas de deslegitimación que minan su capacidad de acción. En algunos casos, los recortes presupuestarios han afectado incluso la instalación oportuna de casillas y la contratación de personal técnico. La defensa de la autonomía requiere no solo reformas jurídicas, sino también una cultura democrática que reconozca el valor de las instituciones independientes como garantes de derechos. La ciudadanía informada, los medios responsables y los contrapesos institucionales son aliados esenciales para blindar a los órganos electorales frente a embates políticos. Ante este escenario, el reto no es únicamente normativo, sino sistémico: construir condiciones materiales, simbólicas y operativas para que la autonomía no sea un enunciado vacío, sino una realidad tangible en cada etapa del proceso electoral.`,
+    contexto: `El Congreso de Chiapas aprobó hace tres semanas un recorte del 22% al presupuesto del IEPC para el ejercicio en curso, argumentando "austeridad republicana". El Secretario Ejecutivo del IEPC estima que con ese presupuesto no se podrán instalar 340 casillas en municipios de difícil acceso. El Consejo General debe pronunciarse ante la ciudadanía y ante el INE sobre esta situación.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice las implicaciones del recorte presupuestal aprobado por el Congreso local para la organización del proceso electoral en Chiapas, identifique los fundamentos jurídicos para defender la suficiencia presupuestal del IEPC, evalúe los riesgos para la celebración de la jornada electoral y proponga una estrategia institucional para defender la autonomía financiera del IEPC y garantizar la organización de elecciones en condiciones adecuadas.`
+  },
+  {
+    categoria: 'I — Principios constitucionales electorales',
+    titulo: 'Colisión de principios: equidad en la contienda vs. libertad de expresión',
+    texto: `Uno de los dilemas más frecuentes en materia electoral es la colisión entre principios constitucionales. Por ejemplo, el principio de equidad en la contienda puede entrar en tensión con la libertad de expresión, sobre todo cuando se trata de declaraciones de actores públicos o cobertura mediática durante las campañas. El Tribunal Electoral ha resuelto numerosos casos en los que debe ponderar entre estos principios. En ocasiones, se ha privilegiado el derecho a la información de la ciudadanía, aun cuando ello implique cierta ventaja comunicacional para una candidatura. En otros casos, se ha restringido la difusión de mensajes que puedan influir desproporcionadamente en el electorado. Esta tensión también se manifiesta en el debate sobre la participación de servidores públicos. Si bien el artículo 134 constitucional prohíbe el uso de recursos públicos con fines electorales, no siempre es clara la frontera entre una manifestación legítima de opinión y una intervención indebida en los procesos democráticos. La solución a estos conflictos no puede ser absolutista. Requiere de un análisis contextual, proporcional y razonado, que tome en cuenta tanto el impacto del mensaje como el momento del proceso electoral. La clave está en preservar el equilibrio entre los derechos y la integridad de la contienda, sin caer en censura injustificada ni permisividad electoral.`,
+    contexto: `El gobernador de Chiapas publicó en sus redes sociales personales, durante el período de campaña, un mensaje de apoyo explícito al candidato de su partido a la presidencia municipal de Tuxtla Gutiérrez. La publicación fue vista por 180,000 personas. La candidata opositora presentó denuncia ante el IEPC por violación al artículo 134 constitucional. El gobernador argumenta que lo hizo a título personal desde una cuenta no oficial.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice el caso concreto de la publicación del gobernador, identifique el marco jurídico aplicable incluyendo el artículo 134 constitucional y la jurisprudencia del TEPJF sobre servidores públicos en campañas, evalúe la tensión entre libertad de expresión y equidad en la contienda, y proponga la resolución institucional que el IEPC debe adoptar, fundamentando su decisión en los principios de proporcionalidad y certeza jurídica.`
+  },
+  {
+    categoria: 'I — Principios constitucionales electorales',
+    titulo: 'Principio de certeza electoral: transparencia y confianza institucional',
+    texto: `El principio de certeza en materia electoral es uno de los pilares sobre los que descansa la confianza ciudadana en los procesos democráticos. Este principio se refiere a la previsibilidad de las reglas, la claridad en los procedimientos y la garantía de que los resultados reflejan con fidelidad la voluntad popular. En la práctica, la certeza puede verse comprometida por diversos factores: errores humanos en el cómputo, inconsistencias en actas, fallas tecnológicas y cambios normativos de última hora. Aunque algunos de estos elementos son inevitables, su acumulación puede afectar la percepción de legitimidad del proceso electoral. La respuesta institucional ante situaciones que generan incertidumbre debe basarse en protocolos claros y públicos, que refuercen la transparencia y permitan verificar cada etapa del proceso. La improvisación o las decisiones opacas debilitan la credibilidad de la autoridad electoral, incluso si no hay dolo o intención fraudulenta. Por ello, más allá del resultado, lo que está en juego es la integridad del proceso. Los órganos electorales deben asegurar que cada paso —desde la capacitación de funcionarios hasta el cómputo distrital— sea verificable, documentado y conforme a la ley. Solo así se sostiene la estabilidad institucional en contextos de alta competencia política.`,
+    contexto: `Durante el cómputo distrital en el Distrito 07 de Chiapas, se detectaron inconsistencias en 18 actas de escrutinio: los totales aritméticos no cuadran con los votos registrados por candidatura. La diferencia entre el primero y segundo lugar es de apenas 312 votos. Los representantes del partido que va perdiendo exigen la apertura de paquetes electorales. Los medios locales ya cubren el caso en tiempo real.`,
+    pregunta: `Como Consejero Electoral del IEPC presente en la sesión de cómputo distrital, analice la situación generada por las inconsistencias en las actas, identifique el procedimiento legal aplicable para la apertura de paquetes y recuento de votos, evalúe los riesgos para el principio de certeza y la legitimidad del resultado, y proponga la ruta de acción institucional que garantice la transparencia del cómputo y la aceptación del resultado por todas las partes.`
+  },
+  {
+    categoria: 'J — Participación ciudadana y democracia',
+    titulo: 'Participación ciudadana: del voto al ejercicio pleno de la soberanía popular',
+    texto: `En los procesos electorales, la participación ciudadana no debe entenderse únicamente como el acto de votar, sino como un conjunto de acciones deliberadas que configuran el ejercicio de la soberanía popular. El involucramiento en observación electoral, la exigencia de rendición de cuentas y la denuncia de irregularidades forman parte de una ciudadanía activa. Las autoridades electorales han desplegado campañas de educación cívica con el propósito de transitar de una cultura del deber al ejercicio consciente de los derechos. Sin embargo, la eficacia de estas campañas no puede medirse exclusivamente por el número de votos emitidos, sino por la calidad de la participación y el nivel de comprensión sobre el sistema democrático. Un obstáculo persistente ha sido la normalización de prácticas ilegales —como la compra de votos o la coacción—, que pervierten el sentido de la participación y generan una percepción distorsionada del valor del sufragio. Estas prácticas no solo erosionan la legalidad, sino que desincentivan la participación informada y consciente. Por ello, los organismos públicos locales deben enfocar parte de sus estrategias en combatir el cinismo político, fortaleciendo canales de diálogo ciudadano, mecanismos de denuncia accesibles y programas formativos sostenidos en el tiempo. Fomentar una ciudadanía crítica y vigilante es una tarea tan relevante como organizar elecciones técnicamente impecables.`,
+    contexto: `En Chiapas, la participación electoral en elecciones municipales ha caído del 68% en 2016 al 51% en 2022. En 14 municipios de alta marginación, la participación fue menor al 35%. El IEPC debe presentar ante el Consejo General una estrategia de educación cívica para el proceso 2026, con un presupuesto limitado de 8 millones de pesos.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice las causas de la baja participación electoral en Chiapas, identifique los grupos y regiones prioritarias para una estrategia de educación cívica, evalúe las alternativas de intervención más costo-efectivas dado el presupuesto disponible, y proponga un plan estratégico de participación ciudadana que sea innovador, territorialmente diferenciado y medible en sus resultados.`
+  },
+  {
+    categoria: 'J — Participación ciudadana y democracia',
+    titulo: 'Democracia participativa: del sufragio al derecho activo',
+    texto: `En una democracia funcional, el acto de votar representa solo una fracción del verdadero compromiso ciudadano. La participación efectiva implica también observar, exigir, debatir, construir. Cuando los individuos limitan su papel al sufragio periódico, la esfera pública se ve debilitada, y los poderes públicos pierden retroalimentación crítica. No se trata de idealizar una ciudadanía perfecta, sino de comprender que los mecanismos de rendición de cuentas no dependen exclusivamente de instituciones autónomas. La ciudadanía debe ejercer su vigilancia de manera informada, organizada y persistente. Este enfoque es especialmente importante en contextos locales, donde las decisiones tienen impactos directos y visibles. Sin embargo, muchas personas asumen que cumplieron con la democracia al emitir un voto. Este cumplimiento formal, aunque relevante, no es suficiente si se desliga del seguimiento posterior: fiscalización del ejercicio presupuestal, exigencia de cumplimiento de promesas, y participación en consejos ciudadanos, cabildos y consultas. Para fortalecer el tejido democrático, se requiere una ciudadanía que transite del deber cívico al derecho activo. Un cambio de paradigma donde el voto sea inicio, no conclusión. En ese tránsito, los organismos públicos electorales tienen un papel clave: no solo organizar elecciones, sino facilitar canales de participación constante e incluyente.`,
+    contexto: `El IEPC Chiapas tiene la facultad legal de promover mecanismos de participación ciudadana más allá de las elecciones. El Consejo General está debatiendo si destinar recursos a la instalación de observatorios ciudadanos en 10 municipios piloto que contarían con herramientas digitales para monitorear el ejercicio del gasto público municipal. Algunos consejeros cuestionan si esto está dentro de las atribuciones del IEPC.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice si la instalación de observatorios ciudadanos municipales está dentro de las atribuciones legales del IEPC Chiapas, identifique el fundamento jurídico que sustentaría o limitaría esta iniciativa, evalúe los beneficios y riesgos institucionales de implementarla, y proponga una posición razonada que el Consejo General pueda adoptar, con una ruta de implementación en caso de ser viable.`
+  },
+  {
+    categoria: 'J — Participación ciudadana y democracia',
+    titulo: 'Inclusión electoral: barreras estructurales y responsabilidad institucional',
+    texto: `A pesar de los avances normativos, millones de personas en México siguen sin ejercer plenamente sus derechos políticos. La exclusión no siempre se manifiesta en forma de prohibiciones explícitas, sino mediante obstáculos estructurales: pobreza, falta de información, barreras lingüísticas o de género. En este contexto, hablar de igualdad de acceso al sufragio o a los mecanismos de participación directa resulta problemático. No basta con declarar el derecho: es necesario garantizar las condiciones materiales, culturales y tecnológicas que lo vuelvan practicable para todos los sectores sociales. La tarea de los organismos electorales no puede limitarse a la organización técnica de comicios. También deben desempeñar una función pedagógica: acercar la información, reducir las brechas digitales, fomentar el diálogo intercultural y adaptar los instrumentos de participación a las realidades locales. Si la democracia es una promesa de inclusión, entonces la responsabilidad institucional consiste en traducir esa promesa en acceso real. De lo contrario, se corre el riesgo de administrar formalidades vacías, mientras una parte significativa de la población permanece políticamente invisible.`,
+    contexto: `En Chiapas, el 32% de la población habla una lengua indígena como primera lengua. En el proceso electoral 2022, el IEPC solo produjo materiales de difusión en tsotsil y tseltal, omitiendo otras 11 lenguas indígenas presentes en el estado. Organizaciones indígenas han presentado una queja formal ante la CNDH y han solicitado al IEPC un compromiso de inclusión lingüística para el proceso 2026.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice las obligaciones jurídicas del IEPC en materia de inclusión lingüística y cultural en los procesos electorales, identifique los instrumentos internacionales y nacionales aplicables, evalúe el alcance de la queja presentada ante la CNDH y sus posibles consecuencias institucionales, y proponga un plan de inclusión lingüística y cultural para el proceso 2026 que sea jurídicamente sólido, operativamente viable y presupuestalmente responsable.`
+  },
+  {
+    categoria: 'J — Participación ciudadana y democracia',
+    titulo: 'Calidad democrática: condiciones estructurales y corresponsabilidad ciudadana',
+    texto: `Una sociedad democrática no se define solamente por la existencia de elecciones, sino por la calidad de las condiciones que las rodean. Libertad de expresión, pluralidad informativa, seguridad para ejercer derechos, y canales abiertos al disenso son esenciales para que el voto tenga un sentido pleno. Cuando una elección se celebra en un ambiente marcado por violencia, desinformación o presión política, pierde parte de su legitimidad sustantiva, aunque cumpla con los requisitos legales. En esos casos, lo democrático deja de ser sinónimo de lo formal y se convierte en una interrogante ética. La participación ciudadana auténtica requiere más que procedimientos. Necesita confianza. Esa confianza no se construye exclusivamente desde los órganos electorales, sino desde una cultura democrática compartida, capaz de rechazar prácticas clientelares, discursos de odio o la indiferencia cívica. No es posible consolidar una democracia robusta si la ciudadanía delega todo a las instituciones. La democracia exige corresponsabilidad. A mayor participación crítica, mayor vigilancia sobre el poder. Y con ello, mayor defensa de las libertades que hacen posible el propio acto democrático.`,
+    contexto: `En el contexto del proceso electoral 2026 en Chiapas, el IEPC ha documentado un incremento del 40% en la difusión de noticias falsas sobre el proceso electoral en redes sociales, incluyendo desinformación sobre fechas, requisitos para votar y supuestas irregularidades en el padrón. Varias de estas campañas parecen coordinadas. El IEPC no tiene atribuciones sancionadoras sobre redes sociales, pero sí tiene la responsabilidad de garantizar condiciones para una elección libre e informada.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice el impacto de la desinformación electoral en las condiciones de equidad y libertad del proceso en Chiapas, identifique las atribuciones y limitaciones del IEPC para responder a este fenómeno, evalúe los riesgos para la calidad democrática del proceso y proponga una estrategia institucional de comunicación y verificación de información que fortalezca la confianza ciudadana sin vulnerar la libertad de expresión.`
   }
 ];
 
@@ -1823,6 +2025,45 @@ function volverInicio() {
   cargarEstadisticas();
   cargarHistorial();
   window.scrollTo(0, 0);
+}
+
+function mostrarSelectorEjercicio() {
+  const lista = document.getElementById('ejercicio-lista');
+  lista.innerHTML = MOCIONES.map((m, i) => `
+    <div class="ejercicio-item ${i === estado.indiceActual ? 'activo' : ''}" onclick="seleccionarEjercicio(${i})">
+      <div class="ejercicio-num">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <div class="ejercicio-info-titulo">${m.titulo}</div>
+        <div class="ejercicio-info-cat">${m.categoria}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('modal-selector').classList.remove('hidden');
+}
+
+function cerrarSelector() {
+  document.getElementById('modal-selector').classList.add('hidden');
+}
+
+function seleccionarEjercicio(indice) {
+  cerrarSelector();
+  if (estado.cronometroInterval) clearInterval(estado.cronometroInterval);
+  estado.indiceActual = indice;
+  estado.mocionActual = estado.mocionesRestantes[indice] || MOCIONES[indice];
+  estado.mocionActual = MOCIONES[indice];
+  estado.segundosRestantes = 10800;
+  estado.tiempoInicioEnsayo = Date.now();
+  document.getElementById('mocion-categoria').textContent = estado.mocionActual.categoria;
+  document.getElementById('mocion-texto-principal').textContent = estado.mocionActual.texto;
+  document.getElementById('mocion-contexto').textContent = estado.mocionActual.contexto;
+  document.getElementById('mocion-pregunta').textContent = estado.mocionActual.pregunta;
+  document.getElementById('contador-ejercicio').textContent = `Ejercicio ${indice + 1} de ${MOCIONES.length}`;
+  document.getElementById('editor-ensayo').value = '';
+  document.getElementById('contador-palabras').textContent = '0 / 750–1,000 palabras';
+  document.getElementById('contador-palabras').className = 'contador-palabras palabras-bajo';
+  document.getElementById('barra-fill').style.width = '0%';
+  document.getElementById('btn-terminar').disabled = true;
+  iniciarCronometro();
 }
 
 function reiniciarEstadisticas() {
