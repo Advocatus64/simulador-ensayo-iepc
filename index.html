@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Ensayo — IEPC Chiapas 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde: #1a4731;
+  --verde-med: #2d6a4f;
+  --verde-claro: #52b788;
+  --verde-palido: #d8f3dc;
+  --oro: #c9a84c;
+  --oro-claro: #f4d47a;
+  --crema: #faf7f2;
+  --crema-oscuro: #f0ebe0;
+  --cafe: #3d2b1f;
+  --cafe-med: #6b4c3b;
+  --texto: #1c1c1c;
+  --texto-suave: #5a5a5a;
+  --blanco: #ffffff;
+  --sombra: rgba(26,71,49,0.15);
+  --rojo: #c0392b;
+  --azul: #1a3a5c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--crema);
+  color: var(--texto);
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(26,71,49,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 50%);
+}
+
+/* ── PANTALLA DE ACCESO ── */
+#pantalla-acceso {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.acceso-card {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.15);
+  border-radius: 4px;
+  padding: 3rem 3.5rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 8px 40px var(--sombra);
+  position: relative;
+  overflow: hidden;
+}
+
+.acceso-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--verde), var(--oro), var(--verde));
+}
+
+.escudo-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.escudo-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--verde);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.escudo-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--oro-claro);
+}
+
+.acceso-card h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--verde);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.acceso-card .subtitulo {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+
+.acceso-card label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--verde);
+  margin-bottom: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.acceso-card input[type="password"],
+.acceso-card input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(26,71,49,0.2);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  background: var(--crema);
+  color: var(--texto);
+  transition: border-color 0.2s;
+  letter-spacing: 0.1em;
+}
+
+.acceso-card input:focus {
+  outline: none;
+  border-color: var(--verde-claro);
+  background: var(--blanco);
+}
+
+.error-msg {
+  color: var(--rojo);
+  font-size: 0.82rem;
+  margin-top: 0.5rem;
+  display: none;
+  font-style: italic;
+}
+
+.btn-acceso {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--verde);
+  color: var(--blanco);
+  border: none;
+  border-radius: 3px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+.btn-acceso:hover { background: var(--verde-med); }
+.btn-acceso:active { transform: scale(0.99); }
+
+.nota-acceso {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--crema-oscuro);
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  text-align: center;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ── PANTALLA INICIO ── */
+#pantalla-inicio {
+  display: none;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.header-institucional {
+  background: var(--verde);
+  color: var(--blanco);
+  padding: 1.5rem 2.5rem;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.header-institucional h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--oro-claro);
+}
+
+.header-institucional p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+.stats-bar {
+  background: var(--cafe);
+  padding: 0.75rem 2.5rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  border-radius: 0 0 4px 4px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--oro-claro);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.inicio-contenido {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.indicaciones-card {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 4px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 16px var(--sombra);
+}
+
+.indicaciones-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--verde);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--verde-palido);
+}
+
+.indicaciones-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--cafe);
+  margin: 1.25rem 0 0.75rem;
+}
+
+.indicaciones-card p {
+  line-height: 1.75;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.criterios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.criterio-item {
+  background: var(--crema);
+  border: 1px solid var(--crema-oscuro);
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--verde-claro);
+}
+
+.criterio-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--verde-claro);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.criterio-titulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--verde);
+  margin: 0.25rem 0 0.25rem;
+}
+
+.criterio-puntos {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  font-style: italic;
+}
+
+.ponderacion-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 1rem 0;
+}
+
+.ponderacion-tabla th {
+  background: var(--verde);
+  color: var(--blanco);
+  padding: 0.6rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.ponderacion-tabla td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--crema-oscuro);
+  color: var(--texto-suave);
+}
+
+.ponderacion-tabla tr:nth-child(even) td { background: var(--crema); }
+
+.badge-calificacion {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-a { background: #d4edda; color: #155724; }
+.badge-b { background: #fff3cd; color: #856404; }
+.badge-c { background: #f8d7da; color: #721c24; }
+
+.btn-iniciar {
+  display: block;
+  width: 100%;
+  padding: 1.1rem;
+  background: var(--verde);
+  color: var(--blanco);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(26,71,49,0.25);
+}
+
+.btn-iniciar:hover {
+  background: var(--verde-med);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26,71,49,0.3);
+}
+
+.historial-section {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 4px;
+  padding: 2rem 2.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 16px var(--sombra);
+}
+
+.historial-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--verde);
+  margin-bottom: 1rem;
+}
+
+.historial-empty {
+  color: var(--texto-suave);
+  font-style: italic;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.historial-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--crema-oscuro);
+  font-size: 0.85rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.historial-fecha { color: var(--texto-suave); font-style: italic; }
+.historial-problema { flex: 1; color: var(--cafe); font-weight: 500; min-width: 150px; }
+.historial-calif {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.cal-A { color: #155724; }
+.cal-B { color: #856404; }
+.cal-C { color: #721c24; }
+
+/* ── PANTALLA ENSAYO ── */
+#pantalla-ensayo {
+  display: none;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.ensayo-layout {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .ensayo-layout { grid-template-columns: 1fr; }
+}
+
+.panel-mocion {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px var(--sombra);
+}
+
+.mocion-header {
+  background: var(--verde);
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mocion-header-left h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--oro-claro);
+  font-weight: 700;
+}
+
+.mocion-header-left p {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 0.15rem;
+  font-style: italic;
+}
+
+.contador-ejercicios {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 3px;
+  padding: 0.4rem 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--oro-claro);
+  font-weight: 500;
+}
+
+.mocion-categoria {
+  background: var(--verde-palido);
+  padding: 0.5rem 1.75rem;
+  font-size: 0.75rem;
+  color: var(--verde);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.mocion-texto {
+  padding: 1.75rem;
+}
+
+.mocion-texto p {
+  line-height: 1.8;
+  color: var(--texto);
+  font-size: 0.95rem;
+}
+
+.mocion-contexto {
+  background: var(--crema);
+  border-left: 3px solid var(--oro);
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  border-radius: 0 3px 3px 0;
+  font-size: 0.88rem;
+  color: var(--cafe-med);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.editor-section {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px var(--sombra);
+  margin-top: 1.5rem;
+}
+
+.editor-header {
+  background: var(--cafe);
+  padding: 1rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-header span {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.contador-palabras {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.palabras-ok { background: #d4edda; color: #155724; }
+.palabras-bajo { background: #fff3cd; color: #856404; }
+.palabras-exceso { background: #f8d7da; color: #721c24; }
+
+#editor-ensayo {
+  width: 100%;
+  min-height: 350px;
+  padding: 1.5rem 1.75rem;
+  border: none;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--texto);
+  background: var(--blanco);
+  resize: vertical;
+  outline: none;
+}
+
+#editor-ensayo::placeholder {
+  color: rgba(90,90,90,0.4);
+  font-style: italic;
+}
+
+.editor-footer {
+  padding: 1rem 1.75rem;
+  background: var(--crema);
+  border-top: 1px solid var(--crema-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.barra-progreso-palabras {
+  flex: 1;
+  height: 4px;
+  background: var(--crema-oscuro);
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.barra-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s, background 0.3s;
+}
+
+.btn-terminar {
+  padding: 0.75rem 1.75rem;
+  background: var(--oro);
+  color: var(--cafe);
+  border: none;
+  border-radius: 3px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-terminar:hover { background: var(--oro-claro); }
+.btn-terminar:disabled {
+  background: var(--crema-oscuro);
+  color: rgba(90,90,90,0.5);
+  cursor: not-allowed;
+}
+
+/* ── PANEL LATERAL ── */
+.panel-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.panel-card {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px var(--sombra);
+}
+
+.panel-card h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--texto-suave);
+  margin-bottom: 0.75rem;
+}
+
+.cronometro-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.2rem;
+  font-weight: 500;
+  color: var(--verde);
+  text-align: center;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.cronometro-display.urgente { color: var(--rojo); animation: parpadeo 1s ease-in-out infinite; }
+.cronometro-display.advertencia { color: #856404; }
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.criterios-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.criterio-mini-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--crema-oscuro);
+}
+
+.criterio-mini-item:last-child { border-bottom: none; }
+.criterio-mini-nombre { color: var(--texto-suave); }
+.criterio-mini-pts {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--verde);
+  font-weight: 500;
+}
+
+/* ── PANTALLA EVALUACION ── */
+#pantalla-evaluacion {
+  display: none;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.evaluacion-contenido {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.evaluacion-header {
+  background: var(--verde);
+  border-radius: 4px 4px 0 0;
+  padding: 2rem 2.5rem;
+  color: var(--blanco);
+  text-align: center;
+}
+
+.evaluacion-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--oro-claro);
+  margin-bottom: 0.5rem;
+}
+
+.evaluacion-header p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  font-style: italic;
+}
+
+.calificacion-principal {
+  background: var(--cafe);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.letra-calificacion {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.letra-A { color: #52d68a; }
+.letra-B { color: var(--oro-claro); }
+.letra-C { color: #ff8080; }
+
+.calificacion-detalle {
+  text-align: left;
+}
+
+.calificacion-numero {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  color: var(--blanco);
+  font-weight: 500;
+}
+
+.calificacion-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.calificacion-estado {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 0.5rem;
+}
+
+.estado-idoneo { background: rgba(82,183,138,0.2); color: #52d68a; border: 1px solid rgba(82,183,138,0.3); }
+.estado-no-idoneo { background: rgba(255,128,128,0.2); color: #ff8080; border: 1px solid rgba(255,128,128,0.3); }
+
+.evaluacion-body {
+  background: var(--blanco);
+  border: 1px solid rgba(26,71,49,0.12);
+  border-radius: 0 0 4px 4px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px var(--sombra);
+}
+
+.criterios-puntuacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.criterio-puntaje {
+  background: var(--crema);
+  border: 1px solid var(--crema-oscuro);
+  border-radius: 3px;
+  padding: 0.85rem 1rem;
+}
+
+.criterio-puntaje-titulo {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
+}
+
+.criterio-puntaje-barra {
+  height: 5px;
+  background: var(--crema-oscuro);
+  border-radius: 2px;
+  margin: 0.4rem 0;
+  overflow: hidden;
+}
+
+.criterio-puntaje-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+.criterio-puntaje-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--verde);
+}
+
+.retroalimentacion-texto {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--texto);
+}
+
+.retroalimentacion-texto h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--verde);
+  margin: 1.5rem 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--verde-palido);
+}
+
+.retroalimentacion-texto p {
+  margin-bottom: 0.75rem;
+  color: var(--texto-suave);
+}
+
+.loading-evaluacion {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--verde-palido);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+.loading-evaluacion p {
+  color: var(--texto-suave);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.loading-evaluacion .loading-sub {
+  font-size: 0.78rem;
+  color: rgba(90,90,90,0.6);
+  margin-top: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-siguiente, .btn-inicio {
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 3px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1.5rem;
+}
+
+.btn-siguiente {
+  background: var(--verde);
+  color: var(--blanco);
+  margin-right: 1rem;
+}
+
+.btn-siguiente:hover { background: var(--verde-med); }
+
+.btn-inicio {
+  background: var(--crema-oscuro);
+  color: var(--cafe);
+}
+
+.btn-inicio:hover { background: var(--crema); }
+
+.ensayo-propio-preview {
+  background: var(--crema);
+  border-left: 3px solid var(--verde-claro);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 3px 3px 0;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--cafe-med);
+  font-style: italic;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.separador-evaluacion {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--crema-oscuro), transparent);
+  margin: 2rem 0;
+}
+
+.firma-evaluador {
+  background: var(--crema);
+  border: 1px solid var(--crema-oscuro);
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.firma-avatar {
+  width: 44px;
+  height: 44px;
+  background: var(--verde);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--oro-claro);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.firma-texto p:first-child {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--verde);
+}
+
+.firma-texto p:last-child {
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+  font-style: italic;
+}
+
+/* Pantallas ocultas */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     PANTALLA 1: ACCESO
+═════════════════════════════════════════ -->
+<div id="pantalla-acceso">
+  <div class="acceso-card">
+    <div class="escudo-header">
+      <div class="escudo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2zm-1 13.5l-3.5-3.5 1.41-1.41L11 12.67l5.09-5.08 1.41 1.41L11 15.5z"/>
+        </svg>
+      </div>
+      <h1>Simulador de Ensayo<br>IEPC Chiapas 2026</h1>
+      <p class="subtitulo">Instituto de Elecciones y Participación Ciudadana</p>
+    </div>
+
+    <div style="margin-bottom: 1.25rem;">
+      <label for="input-clave">Clave de acceso</label>
+      <input type="password" id="input-clave" placeholder="••••••••" autocomplete="off" />
+      <p class="error-msg" id="error-clave">Clave incorrecta. Intenta de nuevo.</p>
+    </div>
+
+    <button class="btn-acceso" onclick="verificarAcceso()">Ingresar al simulador</button>
+
+    <div class="nota-acceso">
+      Plataforma de práctica <strong>no oficial</strong> para aspirantes a<br>
+      Consejería Electoral del IEPC Chiapas · Proceso 2026
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANTALLA 2: INICIO / INDICACIONES
+═════════════════════════════════════════ -->
+<div id="pantalla-inicio">
+  <div class="header-institucional">
+    <div>
+      <h1>Simulador de Ensayo — IEPC Chiapas 2026</h1>
+      <p>Evaluación tipo COLMEX · Preparación para aspirantes a Consejería Electoral</p>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:rgba(255,255,255,0.5); text-align:right;">
+      PROCESO DE SELECCIÓN<br>Y DESIGNACIÓN 2026
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-label">Sesiones completadas</span>
+      <span class="stat-value" id="stat-sesiones">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Ensayos realizados</span>
+      <span class="stat-value" id="stat-ensayos">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Tiempo total de práctica</span>
+      <span class="stat-value" id="stat-tiempo">00:00:00</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Última calificación</span>
+      <span class="stat-value" id="stat-ultima">—</span>
+    </div>
+  </div>
+
+  <div class="inicio-contenido">
+    <div class="indicaciones-card">
+      <h2>Indicaciones generales</h2>
+
+      <p>Este simulador reproduce las condiciones del ensayo que aplica el <strong>Colegio de México (COLMEX)</strong> en el proceso de selección y designación de Consejerías Electorales del IEPC Chiapas, conforme al Acuerdo INE/CG325/2025.</p>
+
+      <h3>¿Cómo funciona?</h3>
+      <p>Se te presentará una <strong>moción</strong>: una situación problemática del ámbito político-electoral en Chiapas. Deberás redactar un ensayo analizando el problema, identificando actores, evaluando riesgos y proponiendo una ruta de acción institucional.</p>
+      <p>Cada sesión incluye hasta <strong>10 ejercicios distintos</strong>, presentados en orden aleatorio. El cronómetro de <strong>3 horas</strong> simula las condiciones reales del examen.</p>
+
+      <h3>Extensión requerida</h3>
+      <p>El ensayo debe tener entre <strong>750 y 1,000 palabras</strong>. El contador en tiempo real te indicará si estás dentro del rango. No podrás enviar el ensayo si está fuera de ese rango.</p>
+
+      <h3>Criterios de evaluación</h3>
+      <div class="criterios-grid">
+        <div class="criterio-item">
+          <div class="criterio-num">Criterio 1</div>
+          <div class="criterio-titulo">Definición del problema</div>
+          <div class="criterio-puntos">Hasta 15 puntos</div>
+        </div>
+        <div class="criterio-item">
+          <div class="criterio-num">Criterio 2</div>
+          <div class="criterio-titulo">Actores y escenarios</div>
+          <div class="criterio-puntos">Hasta 20 puntos</div>
+        </div>
+        <div class="criterio-item">
+          <div class="criterio-num">Criterio 3</div>
+          <div class="criterio-titulo">Propuestas y estrategias</div>
+          <div class="criterio-puntos">Hasta 25 puntos</div>
+        </div>
+        <div class="criterio-item">
+          <div class="criterio-num">Criterio 4</div>
+          <div class="criterio-titulo">Ruta de acción</div>
+          <div class="criterio-puntos">Hasta 30 puntos</div>
+        </div>
+        <div class="criterio-item">
+          <div class="criterio-num">Criterio 5</div>
+          <div class="criterio-titulo">Redacción y ortografía</div>
+          <div class="criterio-puntos">Hasta 10 puntos</div>
+        </div>
+      </div>
+
+      <h3>Clasificación de resultados</h3>
+      <table class="ponderacion-tabla">
+        <thead>
+          <tr><th>Puntaje</th><th>Clasificación</th><th>Resultado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>75 – 100 pts</td>
+            <td><span class="badge-calificacion badge-a">Tipo A</span></td>
+            <td>Ensayo idóneo · Excelente</td>
+          </tr>
+          <tr>
+            <td>50 – 74 pts</td>
+            <td><span class="badge-calificacion badge-b">Tipo B</span></td>
+            <td>Ensayo idóneo · Suficiente</td>
+          </tr>
+          <tr>
+            <td>0 – 49 pts</td>
+            <td><span class="badge-calificacion badge-c">Tipo C</span></td>
+            <td>Ensayo no idóneo</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Retroalimentación con IA</h3>
+      <p>Al concluir tu ensayo, recibirás una evaluación detallada generada por inteligencia artificial, con el perfil de un evaluador académico del COLMEX, que te explicará tus fortalezas, áreas de oportunidad y recomendaciones específicas para mejorar.</p>
+    </div>
+
+    <button class="btn-iniciar" onclick="iniciarSesion()">
+      Iniciar práctica de ensayo →
+    </button>
+
+    <div class="historial-section">
+      <h2>Historial de práctica</h2>
+      <div id="historial-lista">
+        <div class="historial-empty">Aún no has realizado ningún ensayo en este dispositivo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANTALLA 3: ENSAYO
+═════════════════════════════════════════ -->
+<div id="pantalla-ensayo">
+  <div class="ensayo-layout">
+
+    <!-- Columna principal -->
+    <div>
+      <div class="panel-mocion">
+        <div class="mocion-header">
+          <div class="mocion-header-left">
+            <h2>Moción para análisis</h2>
+            <p>Lea con atención antes de redactar su ensayo</p>
+          </div>
+          <div class="contador-ejercicios" id="contador-ejercicio">Ejercicio 1 de 10</div>
+        </div>
+        <div class="mocion-categoria" id="mocion-categoria">Categoría</div>
+        <div class="mocion-texto">
+          <p id="mocion-texto-principal"></p>
+          <div class="mocion-contexto" id="mocion-contexto"></div>
+          <p id="mocion-pregunta" style="font-style:italic; color:var(--verde); font-size:0.9rem; margin-top:0.5rem;"></p>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="editor-header">
+          <span>Redacción del ensayo</span>
+          <span class="contador-palabras palabras-bajo" id="contador-palabras">0 / 750–1,000 palabras</span>
+        </div>
+        <textarea
+          id="editor-ensayo"
+          placeholder="Comience a redactar su ensayo aquí. Recuerde: debe definir el problema central, identificar a los actores relevantes, analizar los riesgos y oportunidades, desarrollar propuestas concretas y trazar una ruta de acción institucional fundamentada en la legislación vigente..."
+          oninput="actualizarContador()"
+        ></textarea>
+        <div class="editor-footer">
+          <div style="flex:1;">
+            <div class="barra-progreso-palabras">
+              <div class="barra-fill" id="barra-fill" style="width:0%; background:var(--crema-oscuro);"></div>
+            </div>
+          </div>
+          <button class="btn-terminar" id="btn-terminar" onclick="terminarEnsayo()" disabled>
+            Terminar ensayo y evaluar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="panel-lateral">
+      <div class="panel-card">
+        <h3>Tiempo restante</h3>
+        <div class="cronometro-display" id="cronometro">3:00:00</div>
+      </div>
+
+      <div class="panel-card">
+        <h3>Criterios COLMEX</h3>
+        <div class="criterios-mini">
+          <div class="criterio-mini-item">
+            <span class="criterio-mini-nombre">Definición del problema</span>
+            <span class="criterio-mini-pts">/ 15 pts</span>
+          </div>
+          <div class="criterio-mini-item">
+            <span class="criterio-mini-nombre">Actores y escenarios</span>
+            <span class="criterio-mini-pts">/ 20 pts</span>
+          </div>
+          <div class="criterio-mini-item">
+            <span class="criterio-mini-nombre">Propuestas y estrategias</span>
+            <span class="criterio-mini-pts">/ 25 pts</span>
+          </div>
+          <div class="criterio-mini-item">
+            <span class="criterio-mini-nombre">Ruta de acción</span>
+            <span class="criterio-mini-pts">/ 30 pts</span>
+          </div>
+          <div class="criterio-mini-item">
+            <span class="criterio-mini-nombre">Redacción y ortografía</span>
+            <span class="criterio-mini-pts">/ 10 pts</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3>Recuerde</h3>
+        <p style="font-size:0.8rem; color:var(--texto-suave); line-height:1.6;">
+          La evaluación no depende de su postura política, sino de su capacidad para argumentar y proponer una ruta institucional que resuelva el problema planteado.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PANTALLA 4: EVALUACIÓN
+═════════════════════════════════════════ -->
+<div id="pantalla-evaluacion">
+  <div class="evaluacion-contenido">
+
+    <div class="evaluacion-header">
+      <h2>Dictamen del Ensayo</h2>
+      <p>Evaluación académica — Perfil evaluador COLMEX · IEPC Chiapas 2026</p>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-ev" class="loading-evaluacion" style="background:var(--blanco); border: 1px solid rgba(26,71,49,0.12); border-top:none;">
+      <div class="loading-spinner"></div>
+      <p>Evaluando su ensayo con criterios académicos COLMEX...</p>
+      <p class="loading-sub">Analizando estructura argumentativa, fundamentación jurídica y coherencia institucional</p>
+    </div>
+
+    <!-- Resultado (oculto hasta recibir evaluación) -->
+    <div id="resultado-ev" class="hidden">
+      <div class="calificacion-principal">
+        <div class="letra-calificacion" id="letra-cal">A</div>
+        <div class="calificacion-detalle">
+          <div class="calificacion-numero" id="numero-cal">82 / 100</div>
+          <div class="calificacion-label">Puntaje total</div>
+          <div class="calificacion-estado estado-idoneo" id="estado-cal">Ensayo idóneo</div>
+        </div>
+      </div>
+
+      <div class="evaluacion-body">
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--verde); margin-bottom:1rem;">
+          Puntaje por criterio
+        </h3>
+        <div class="criterios-puntuacion" id="criterios-detalle">
+          <!-- Se llena dinámicamente -->
+        </div>
+
+        <div class="separador-evaluacion"></div>
+
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--verde); margin-bottom:1rem;">
+          Su ensayo
+        </h3>
+        <div class="ensayo-propio-preview" id="ensayo-preview"></div>
+
+        <div class="separador-evaluacion"></div>
+
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--verde); margin-bottom:1rem;">
+          Retroalimentación académica
+        </h3>
+        <div class="retroalimentacion-texto" id="retroalimentacion-texto">
+          <!-- Se llena dinámicamente -->
+        </div>
+
+        <div class="firma-evaluador">
+          <div class="firma-avatar">CM</div>
+          <div class="firma-texto">
+            <p>Dr. Evaluador Académico — Colegio de México</p>
+            <p>Dictaminador de la Comisión de Selección y Designación · IEPC Chiapas 2026</p>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
+          <button class="btn-siguiente" id="btn-siguiente-ensayo" onclick="siguienteEnsayo()">
+            Siguiente ejercicio →
+          </button>
+          <button class="btn-inicio" onclick="volverInicio()">
+            Volver al inicio
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════════════════
+const CLAVE_ACCESO = 'IEPC2026';
+const GEMINI_KEY = 'AIzaSyA3FP61wgnknqSvwZsfioYaHDbct8mD2cI';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+// ══════════════════════════════════════════════════════
+// BANCO DE 10 MOCIONES — NIVEL 3 CHIAPAS
+// ══════════════════════════════════════════════════════
+const MOCIONES = [
+  {
+    categoria: 'A — Conflicto en jornada electoral',
+    titulo: 'Violencia e intimidación en casillas de la región Selva',
+    texto: `El día de la jornada electoral para la renovación de diputaciones locales en Chiapas, a las 09:15 horas, el Vocal Ejecutivo de la Junta Distrital 09 con cabecera en Ocosingo reporta de manera urgente al Consejo General del IEPC que en al menos cuatro municipios de la región Selva —Altamirano, Chilón, Sitalá y Tumbalá— grupos de personas presuntamente armadas están impidiendo activamente la instalación de casillas, amenazando de muerte a funcionarios electorales de casilla, bloqueando caminos rurales y obstaculizando físicamente el acceso de votantes a los centros de votación. Dos funcionarios de casilla ya presentaron heridas leves y han solicitado resguardo policial, mismo que no ha llegado tras dos horas de espera. El Director de Organización Electoral reporta que 34 de las 87 casillas previstas en esa zona aún no han podido instalarse. La transmisión de datos del Programa de Resultados Electorales Preliminares (PREP) está siendo interferida en esa región, con caídas intermitentes del sistema. Simultáneamente, el representante del partido Morena ante el Consejo General exige la suspensión total de la jornada en esos municipios, mientras que el representante del PAN solicita medidas de fuerza para garantizar el proceso. El Secretario Ejecutivo del IEPC ha convocado de emergencia a sesión del Consejo General. En ese contexto, se sabe además que la Comisión Nacional de Derechos Humanos emitió desde hace tres días una alerta temprana sobre el riesgo de violencia en esa región, misma que el IEPC recibió pero no difundió públicamente. La Guardia Nacional reporta que sus efectivos en la zona son insuficientes para cubrir todos los puntos reportados. Faltan 4 horas para el cierre oficial de casillas.`,
+    contexto: `El contexto regional es de alta conflictividad histórica y estructural. Los cuatro municipios afectados tienen población predominantemente tseltal y ch'ol, con niveles de marginación muy alta según el CONEVAL. En el proceso electoral anterior, la participación ciudadana en esa zona superó el 73%, lo que indica una ciudadanía activa y organizada. Organizaciones civiles como el Centro de Derechos Humanos Fray Bartolomé de las Casas denuncian que el grupo que obstaculiza la votación actúa en favor de uno de los candidatos a diputado local, quien habría financiado la operación. Existen además tensiones territoriales por disputa de predios entre dos grupos comunitarios que llevan más de dos años sin resolución judicial. La elección en disputa es para la diputación local del Distrito 10, considerado estratégico por su peso en la conformación del Congreso del Estado. Hay periodistas de medios nacionales e internacionales cubriendo la jornada en esa zona.`,
+    pregunta: `Como Consejero Electoral del IEPC Chiapas, analice integralmente la situación, identifique a todos los actores involucrados y sus intereses, evalúe los riesgos institucionales, jurídicos y de seguridad presentes, y proponga una ruta de acción concreta, secuencial y fundamentada en el marco legal vigente —incluyendo la LGIPE, el Código Electoral del Estado de Chiapas y los protocolos del INE— para garantizar el ejercicio del voto de la ciudadanía y preservar la validez jurídica de la jornada electoral.`
+  },
+  {
+    categoria: 'A — Conflicto en jornada electoral',
+    titulo: 'Casillas no instaladas en comunidades de difícil acceso en Los Altos',
+    texto: `A las 10:30 horas de la jornada electoral para la elección de ayuntamientos en Chiapas, el sistema de monitoreo del IEPC registra que 23 casillas en comunidades indígenas de alta marginación en los municipios de San Juan Cancuc, Pantelhó y Chenalhó no han podido instalarse. Los 46 funcionarios electorales capacitados asignados a esas secciones no se presentaron a sus puestos, aparentemente por amenazas previas de grupos locales vinculados a disputas por el control político municipal. Adicionalmente, las vías de acceso a siete comunidades tsotsiles fueron bloqueadas desde las 3:00 horas de la madrugada con vehículos y troncos. El material electoral, incluidas urnas, boletas y actas, está físicamente resguardado en las cabeceras municipales pero no ha podido trasladarse a las secciones por la imposibilidad de circular. El Vocal Ejecutivo de la Junta Distrital correspondiente informa que los suplentes de los funcionarios que no se presentaron tampoco están disponibles. A esta situación se suma que en Pantelhó existe un conflicto armado latente entre dos grupos que disputan el control territorial desde 2021, lo cual genera un riesgo de seguridad real para cualquier funcionario que intente instalar las casillas. El Presidente Municipal en funciones de Chenalhó declaró a medios locales que "el IEPC es responsable del caos" y que él no garantizará la seguridad de los funcionarios electorales.`,
+    contexto: `La región de Los Altos tiene el índice más alto de participación electoral indígena en Chiapas y es considerada una de las zonas de mayor densidad de votantes en elecciones municipales. En el proceso electoral anterior, las comunidades de estas tres demarcaciones registraron tasas de participación superiores al 80%, con una alta votación femenina. La no instalación de las 23 casillas afectaría el derecho al voto de aproximadamente 18,400 ciudadanos, lo que equivale al 31% del padrón total de esos tres municipios. El Observatorio Electoral Chiapas ya documentó y publicó las amenazas previas contra funcionarios desde hace 10 días, pero el IEPC no tomó medidas preventivas adicionales. Hay presencia de observadores electorales nacionales e internacionales, así como medios de comunicación de alcance nacional. El resultado electoral en estos tres municipios podría ser determinante para la mayoría en el Congreso local.`,
+    pregunta: `Como integrante del Consejo General del IEPC, analice el problema en su totalidad, identifique todos los actores relevantes y sus responsabilidades institucionales, evalúe los escenarios posibles —incluida la posible nulidad parcial o total de la elección en esas secciones y sus consecuencias políticas y jurídicas— y diseñe una estrategia institucional de respuesta que sea jurídicamente sólida, operativamente viable y políticamente sostenible ante los distintos actores involucrados.`
+  },
+  {
+    categoria: 'B — Violencia política de género',
+    titulo: 'Acoso y amenazas contra candidata indígena a la alcaldía de Tenejapa',
+    texto: `El IEPC recibe una denuncia formal y documentada de la candidata a la presidencia municipal de Tenejapa registrada por el partido Morena, quien es mujer tsotsil, hablante de lengua indígena y primera candidata indígena en la historia de ese municipio para ese cargo. La denunciante reporta haber recibido en los últimos ocho días: a) seis mensajes de amenaza de muerte enviados desde números desconocidos por WhatsApp; b) pintadas en su domicilio y en el de su madre con mensajes que dicen "las mujeres no mandan aquí" y "vete o te vas a arrepentir"; c) la destrucción de al menos 40 de sus espectaculares de campaña en zonas rurales del municipio; y d) la circulación masiva en redes sociales de un video manipulado mediante inteligencia artificial (deepfake) en el que supuestamente ella hace declaraciones en contra de la comunidad indígena y de los ancianos del consejo de principales. El presidente del Comisariado Ejidal del ejido San Jerónimo ha declarado públicamente en una asamblea comunitaria que "una mujer no tiene la experiencia ni los cargos para gobernar" y ha convocado a asambleas adicionales para "orientar el voto correctamente". Dos regidores del ayuntamiento actual —del partido opositor— han difundido el video falso desde sus cuentas personales. La candidata denuncia además que sus representantes de casilla han sido amenazados con no permitirles el acceso a los centros de votación el día de la jornada.`,
+    contexto: `La elección municipal en Tenejapa está programada para dentro de 15 días. Tenejapa es un municipio de Los Altos con una población de aproximadamente 35,000 habitantes, con usos y costumbres parcialmente reconocidos por el Congreso local pero sin plena autonomía para elecciones de ayuntamiento. La candidata cuenta con respaldo de organizaciones de mujeres indígenas como la CODIMUJ y el colectivo Las Abejas, así como de la diócesis de San Cristóbal. El partido que registró su candidatura ha guardado silencio institucional. La Fiscalía Especializada en Delitos Electorales (FEDE) fue notificada hace cinco días pero no ha abierto carpeta de investigación formal. El caso ha generado cobertura en medios nacionales y ha sido mencionado por la Secretaría de las Mujeres del gobierno federal como un caso de violencia política a seguir.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice la situación en su integralidad desde la perspectiva de la violencia política contra las mujeres en razón de género conforme a la Ley General de Acceso de las Mujeres a una Vida Libre de Violencia y el protocolo del TEPJF, identifique las obligaciones jurídicas y constitucionales del IEPC en este caso concreto, evalúe los riesgos para la equidad de la contienda y para la integridad de la candidata, y proponga una ruta de acción coordinada con otras instituciones que garantice el pleno ejercicio de sus derechos político-electorales.`
+  },
+  {
+    categoria: 'B — Violencia política de género',
+    titulo: 'Presión coordinada sobre consejera electoral del IEPC para renunciar',
+    texto: `En el transcurso de una semana, tres de los siete integrantes del Consejo General del IEPC Chiapas han presentado ante medios de comunicación un escrito firmado en el que exigen la renuncia inmediata de una consejera electoral, argumentando que "su actuación ha sido sistemáticamente parcial" en la resolución de recursos de inconformidad durante el proceso electoral en curso. El documento fue firmado también por los representantes acreditados de dos partidos políticos nacionales ante el Consejo General. En paralelo, en redes sociales se ha desatado una campaña de desprestigio de alto impacto que incluye: mensajes con contenido sexista que cuestionan su capacidad intelectual por ser mujer, publicaciones que exponen su domicilio particular, fotomontajes degradantes con su imagen, y un hashtag que exige su destitución con miles de interacciones. La consejera afectada ha presentado su denuncia formal ante la Secretaría Ejecutiva del IEPC, ha solicitado medidas cautelares al TEPJF y ha pedido que el pleno del Consejo se pronuncie públicamente en su defensa. Adicionalmente, ha reportado que en los últimos tres días ha recibido llamadas anónimas amenazantes a su teléfono personal y que una persona desconocida se presentó en el colegio de sus hijos preguntando por ella.`,
+    contexto: `La consejera en cuestión fue designada por el INE hace dos años y tiene cinco años restantes en su encargo. La presión en su contra coincide temporalmente con una resolución que ella impulsó y que fue aprobada por mayoría, la cual declaró la nulidad de un proceso interno de selección de candidatos de uno de los partidos firmantes del escrito en su contra, decisión que fue confirmada posteriormente por el TEPJF. Organizaciones feministas de Tuxtla Gutiérrez, San Cristóbal y Comitán se han pronunciado públicamente en su defensa. El INE ha emitido un comunicado institucional señalando que la autonomía e independencia de los consejeros de los OPL debe ser respetada conforme al artículo 116 de la CPEUM. La situación está siendo monitoreada por la Unidad Técnica de Vinculación con los Organismos Públicos Locales del INE.`,
+    pregunta: `Como Consejero Electoral del IEPC que no está involucrado en el conflicto, analice la situación desde el marco jurídico de la violencia política de género en el ámbito institucional, identifique a todos los actores involucrados y sus responsabilidades, evalúe los riesgos para la autonomía del órgano electoral y para la credibilidad del proceso en curso, y proponga una ruta de acción institucional que defienda la independencia del IEPC y garantice la seguridad e integridad de la consejera afectada, fundamentando sus propuestas en la legislación vigente.`
+  },
+  {
+    categoria: 'C — Partidos políticos y candidaturas',
+    titulo: 'Impugnación de candidatura indígena por presuntos requisitos incumplidos en Oxchuc',
+    texto: `El IEPC recibe un escrito de impugnación formal presentado por el partido Acción Nacional en el que señala que la candidata a la presidencia municipal de Oxchuc registrada por el PVEM-Chiapas no cumple con el requisito de residencia efectiva mínima de tres años en el municipio, establecido en el artículo 23 del Código Electoral del Estado de Chiapas. La candidata, de 38 años, es una mujer tseltal hablante de la lengua materna, con amplio reconocimiento comunitario y propuesta por la asamblea de principales del municipio. En su defensa, aporta: constancias de residencia expedidas por el delegado municipal, un acta de nacimiento que la vincula al municipio, testimonios de vecinos y líderes comunitarios, y un documento de la asamblea comunitaria que avala su arraigo cultural. Sin embargo, el PAN presenta como prueba tres recibos de arrendamiento de un departamento en Tuxtla Gutiérrez a nombre de la candidata con fechas del año anterior, así como un contrato de trabajo de 18 meses con una empresa de la capital del estado. La impugnación se presenta 72 horas antes del vencimiento del plazo legal de registro de candidaturas. En caso de que sea retirada la candidatura, la planilla del PVEM quedaría encabezada por un hombre, lo que haría imposible cumplir el principio de paridad horizontal en ese municipio. El TEPJF tiene jurisprudencia en el sentido de que el arraigo cultural y la pertenencia comunitaria pueden ser elementos equivalentes a la residencia formal en casos de candidaturas indígenas, pero también ha resuelto en sentido contrario en otros casos con hechos similares.`,
+    contexto: `Oxchuc es un municipio de referencia para el movimiento indígena en Chiapas, ya que fue el primero en el estado en transitar hacia un sistema de elección por normas comunitarias propias, proceso que estuvo marcado por años de conflicto político y social que incluyeron bloqueos, enfrentamientos y una intervención excepcional del gobierno estatal. La candidata fue propuesta formalmente por la asamblea comunitaria en un proceso propio, antes de ser registrada por el PVEM. La resolución que tome el IEPC en este caso sentará un precedente relevante para las candidaturas indígenas en Chiapas. Además, la decisión tendrá impacto directo sobre el principio de paridad de género horizontal en el municipio y podría generar reacciones comunitarias significativas en cualquier sentido que se resuelva.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice el conflicto jurídico entre los requisitos formales de residencia establecidos en la ley estatal y los criterios de pertenencia comunitaria y arraigo cultural reconocidos por la jurisprudencia del TEPJF para candidaturas de pueblos indígenas, identifique el marco jurídico completo aplicable —incluyendo el Convenio 169 de la OIT, el artículo 2° constitucional, la LGIPE y la ley electoral local— evalúe todos los riesgos jurídicos, políticos y sociales de las distintas posibles resoluciones, y proponga una ruta de acción institucional que sea jurídicamente sólida y garantice el respeto tanto al principio de paridad como a los derechos de las comunidades indígenas.`
+  },
+  {
+    categoria: 'C — Partidos políticos y candidaturas',
+    titulo: 'Presunto financiamiento ilícito de campaña en el Soconusco',
+    texto: `A dos semanas de las elecciones municipales en Tapachula, la Unidad Técnica de Fiscalización del IEPC detecta, durante la revisión de informes parciales de gastos de campaña, una serie de irregularidades financieras graves en los reportes del candidato del PRI a la presidencia municipal de esa ciudad. En primer lugar, los gastos declarados por concepto de publicidad en redes sociales (Facebook, Instagram y TikTok) ascienden a 180,000 pesos, pero el análisis de las métricas públicas de las campañas pagadas en esas plataformas indica que el gasto real fue de al menos 1.2 millones de pesos. En segundo lugar, la empresa local Publicidad Soconusco S.A. de C.V., dedicada a la producción y colocación de espectaculares, declara ante notario que fue contratada directamente por el señor Ernesto Villatoro Gómez —conocido empresario agrícola de la región con vínculos documentados con el candidato priista— y no por el partido político ni por el comité de campaña, por un monto de 840,000 pesos. En tercer lugar, se detectan nueve eventos de campaña masivos realizados en municipios del Soconusco cuyos gastos de organización, traslado y alimentación no fueron reportados. El candidato del PRI se encuentra en primer lugar en todas las encuestas publicadas, con una ventaja de 12 puntos sobre su más cercana competidora. La denuncia formal fue presentada por la candidata del PAN, quien ocupa el segundo lugar en preferencias electorales.`,
+    contexto: `Tapachula es el municipio más poblado del Soconusco y el segundo municipio más importante de Chiapas en términos de actividad económica y padrón electoral. La elección tiene una visibilidad política especial por el contexto migratorio de la región, que ha colocado a la ciudad en el centro del debate nacional e internacional. El empresario presuntamente involucrado en el financiamiento irregular es socio en dos agroindustrias con contratos vigentes con el gobierno municipal actual, también encabezado por el PRI. La Unidad de Inteligencia Financiera (UIF) de la SHCP fue notificada de manera informal por la Fiscalía Electoral, pero no ha emitido resolución. Los topesgastos de campaña para el municipio de Tapachula, conforme al acuerdo del IEPC, ascienden a 2.4 millones de pesos para presidente municipal. El candidato del PRI podría haber rebasado ese tope.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice la situación de presunta violación a las disposiciones de financiamiento y fiscalización de campañas electorales, identifique todos los actores relevantes y sus posibles responsabilidades, evalúe los distintos escenarios posibles —incluida la posibilidad de una nulidad de la elección por rebase de topes de gasto y sus consecuencias políticas y electorales— y proponga la ruta de acción institucional completa, incluyendo las diligencias de investigación, los plazos procesales y la coordinación con otras autoridades competentes.`
+  },
+  {
+    categoria: 'D — Crisis institucional del IEPC',
+    titulo: 'Conflicto público entre consejeros del IEPC en vísperas de jornada electoral',
+    texto: `A 10 días de las elecciones locales más competidas en la historia reciente de Chiapas, dos consejeros electorales del IEPC emiten de manera individual, sin acuerdo ni conocimiento previo del pleno del Consejo General, posicionamientos públicos absolutamente contradictorios sobre la validez del padrón electoral en cuatro municipios de la Sierra Madre de Chiapas: Motozintla, Mazapa de Madero, El Porvenir y Amatenango de la Frontera. El consejero Ramírez Trujillo declaró en una entrevista de radio de amplia audiencia en Tuxtla Gutiérrez que "existen irregularidades graves en el padrón electoral de esos municipios que comprometen seriamente la validez de la elección", sin aportar datos ni documentos que sustenten su dicho. Horas después, la consejera Hernández Ruiz publicó en su cuenta personal de Twitter/X que "el proceso está plenamente garantizado en toda la entidad y los señalamientos de algunos consejeros no tienen sustento". Ambas declaraciones fueron ampliamente difundidas por medios locales y nacionales, y retomadas por todos los partidos políticos para justificar posiciones encontradas. Los representantes de cuatro partidos ante el Consejo General emitieron comunicados propios. La ciudadanía de los municipios afectados comenzó a circular mensajes en grupos de WhatsApp llamando a no acudir a votar "porque la elección ya está arreglada". Tres candidatos a presidentes municipales de distintos partidos anunciaron en conferencia de prensa que desconocerán los resultados de antemano.`,
+    contexto: `El IEPC Chiapas ya vivió una crisis institucional grave el año anterior, cuando dos consejeros emitieron votos particulares públicos en contra de un acuerdo de paridad de género que posteriormente fue validado por el INE mediante instrucción. Ese episodio generó una sanción simbólica pero no tuvo consecuencias jurídicas de fondo. La elección que se avecina es para renovar 122 ayuntamientos y 40 diputaciones locales. La Sierra Madre es una región con presencia de grupos del crimen organizado que han intentado infiltrar procesos electorales en años anteriores. Organizaciones de la sociedad civil como Alianza Cívica Chiapas y el Consejo Ciudadano Electoral han pedido una sesión pública extraordinaria del Consejo General. El INE está monitoreando de cerca la situación a través de la Junta Local Ejecutiva en Chiapas.`,
+    pregunta: `Como Consejero Electoral del IEPC que no está involucrado en las declaraciones contradictorias, analice la crisis institucional generada, identifique todos los riesgos para la credibilidad del proceso electoral y para la cohesión del órgano, evalúe las posibles reacciones de los distintos actores políticos, sociales e institucionales, y proponga una estrategia integral que incluya acciones de comunicación institucional, medidas internas de gobernanza del Consejo General y acciones concretas para restablecer la confianza ciudadana en el proceso, todo ello dentro del marco legal que regula la actuación de los consejeros electorales.`
+  },
+  {
+    categoria: 'D — Crisis institucional del IEPC',
+    titulo: 'Injerencia del Poder Ejecutivo estatal en decisiones del IEPC',
+    texto: `El día de ayer, el Secretario de Gobierno del Estado de Chiapas convocó a una rueda de prensa transmitida en vivo por todos los medios locales y varios nacionales, en la que anunció formalmente que el gobierno del estado "no reconocerá ni acatará los resultados de la elección de diputados locales" si el IEPC no resuelve favorablemente, antes de las próximas 72 horas, la impugnación presentada por el partido gobernante en contra del registro de siete candidaturas independientes al Congreso local. En esa misma rueda de prensa, el funcionario estatal señaló de manera nominal a dos consejeros electorales del IEPC, cuestionando su imparcialidad y llamándolos "operadores políticos de la oposición". Adicionalmente, tres fuentes independientes —incluyendo un periodista de investigación y dos representantes de partidos opositores— reportan de manera documentada que funcionarios de la Secretaría de Gobierno han contactado individualmente, en los últimos cuatro días, a al menos tres de los siete consejeros del IEPC para transmitirles la "posición del gobernador" sobre cómo deben resolverse los recursos pendientes. El IEPC debe sesionar en sesión ordinaria en menos de 48 horas para resolver, entre otros asuntos, precisamente esa impugnación. La impugnación en cuestión fue presentada formalmente fuera del plazo legal establecido en el Código Electoral local, hecho que ya fue documentado por la Secretaría del Consejo General en un dictamen técnico previo.`,
+    contexto: `El partido gobernante en Chiapas cuenta con mayoría en el Congreso local y controla 78 de los 122 ayuntamientos del estado. La declaración del Secretario de Gobierno fue el tema central en todos los medios de comunicación durante las últimas 24 horas y generó reacciones de organismos empresariales, académicos y de la sociedad civil. El INE emitió un comunicado institucional a través de su Consejero Presidente señalando que cualquier intento de presión sobre un organismo público local electoral constituye una violación al principio de autonomía consagrado en el artículo 116 de la Constitución. La Sala Superior del TEPJF también emitió un breve comunicado recordando que las resoluciones de los OPL no pueden condicionarse a posicionamientos del Poder Ejecutivo. Organizaciones como el Observatorio Electoral Chiapas y la Red de Mujeres en Plural han convocado a una vigilia ciudadana frente a las instalaciones del IEPC.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice en profundidad la situación de injerencia del Poder Ejecutivo estatal sobre el principio constitucional de autonomía del órgano electoral, identifique todos los actores involucrados y sus motivaciones políticas e institucionales, evalúe los riesgos jurídicos, institucionales y democráticos que enfrenta el IEPC, y proponga una ruta de acción completa que defienda la independencia del órgano, garantice la resolución apegada a derecho de los asuntos pendientes y comunique de manera clara la posición institucional del IEPC a todos los actores involucrados y a la ciudadanía en general.`
+  },
+  {
+    categoria: 'E — Comunidades indígenas y sistemas normativos',
+    titulo: 'Tensión entre usos y costumbres y paridad de género en San Andrés Larráinzar',
+    texto: `El IEPC recibe una solicitud formal suscrita por el presidente del Consejo de Principales y el secretario de la asamblea comunitaria de San Andrés Larráinzar para que el proceso de elección de autoridades municipales correspondiente al período 2025-2028 se realice íntegramente bajo el sistema normativo indígena tsotsil, con base en el reconocimiento que la Constitución Política del Estado de Chiapas otorga a los municipios para elegir autoridades conforme a sus propias normas. La propuesta de candidatos presentada por la asamblea incluye 11 personas para los cargos de presidente municipal, síndico, regidores y agentes municipales, todos hombres. La asamblea argumenta que "la costumbre tsotsil de San Andrés establece que solo pueden ejercer cargos quienes han cumplido previamente con todos los escalones del sistema de cargos comunitarios, proceso que toma entre 15 y 25 años y que históricamente ha sido exclusivo de los hombres". A los tres días de presentada la solicitud, la organización de mujeres indígenas Mujeres de Maíz y el Grupo de Mujeres de San Cristóbal presentaron un escrito de impugnación ante el IEPC señalando que la propuesta viola el principio constitucional de paridad de género establecido en el artículo 41 de la CPEUM y la reforma electoral de 2019, así como la Ley General de Instituciones y Procedimientos Electorales. Cuatro días después, la asamblea comunitaria realizó una nueva reunión en la que ratificó por unanimidad la lista original y advirtió que "cualquier imposición externa será rechazada por la comunidad", en alusión a episodios anteriores en los que decisiones exógenas generaron conflictos graves.`,
+    contexto: `San Andrés Larráinzar es uno de los municipios de mayor referencia histórica y simbólica para el movimiento indígena en Chiapas, por haber sido sede de los Acuerdos de San Andrés Larráinzar firmados en 1996 entre el gobierno federal y el EZLN, acuerdos que nunca fueron implementados en su totalidad. Hay antecedentes documentados de tensiones que derivaron en episodios de violencia cuando instancias externas intentaron imponer decisiones contrarias a las normas comunitarias. El TEPJF ha emitido criterios jurisprudenciales en casos similares ocurridos en Oaxaca y Guerrero que buscan equilibrar la autonomía indígena con los derechos políticos de las mujeres, sin que exista un criterio único y definitivo aplicable a todos los casos. La resolución que tome el IEPC en este asunto tendrá impacto directo en al menos otros 12 municipios de Los Altos que observan el proceso con atención. La Comisión Nacional para el Desarrollo de los Pueblos Indígenas (CDI) y la Secretaría de Pueblos Indígenas del gobierno estatal han solicitado ser escuchadas en el proceso de deliberación.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice en profundidad el conflicto entre el derecho colectivo a la libre determinación y el autogobierno de los pueblos indígenas reconocido en el artículo 2° constitucional, el Convenio 169 de la OIT y la Declaración de la ONU sobre los Derechos de los Pueblos Indígenas, y el principio de paridad de género como derecho humano reconocido constitucionalmente, identifique el marco jurídico completo aplicable, evalúe todos los escenarios posibles y sus consecuencias, y proponga una ruta de resolución institucional que busque la conciliación de ambos derechos fundamentales, privilegie el diálogo comunitario y sea jurídicamente sustentable ante una eventual revisión del TEPJF.`
+  },
+  {
+    categoria: 'F — Procesos sancionadores',
+    titulo: 'Denuncia por uso de programas sociales con fines electorales en la Zona Norte',
+    texto: `A tres semanas de las elecciones municipales en los municipios de Pichucalco, Reforma e Ixhuatán, la Secretaría Técnica del IEPC recibe en un período de cinco días un total de 47 denuncias ciudadanas individuales, debidamente documentadas con nombre, domicilio y firma de los denunciantes, en las que se señala que funcionarios de los tres ayuntamientos —todos gobernados por el mismo partido— están condicionando de manera directa la entrega de apoyos económicos y despensas del programa estatal "Chiapas Contigo" a la asistencia obligatoria a mítines del candidato del partido gobernante y a la exhibición del voto mediante fotografía el día de la jornada. Se cuenta con 23 videos grabados en teléfono celular en los que se escucha a promotores del programa amenazar a beneficiarios con la suspensión de sus apoyos si no asisten a los eventos de campaña. En al menos cuatro casos, los denunciantes reportan haber recibido visitas domiciliarias de personal municipal para "verificar su apoyo al candidato". Paralelamente, 11 denuncias separadas señalan que vehículos de las tres presidencias municipales, con placas oficiales identificadas, han sido utilizados para transportar personas a mítines de campaña y para distribuir propaganda electoral en horario laboral. El Secretario del Ayuntamiento de Pichucalco declaró públicamente ante medios que "todo es una mentira fabricada por la oposición desesperada", mientras el director del programa estatal en la región guardó silencio. La coalición opositora Chiapas al Frente convocó a una conferencia de prensa con los denunciantes y entregó copia de todas las pruebas al IEPC y a la Fiscalía Electoral.`,
+    contexto: `La Zona Norte de Chiapas es una de las regiones con mayor índice de dependencia de programas sociales del estado, con una alta proporción de la población en situación de pobreza extrema. El partido denunciado lleva 12 años consecutivos gobernando los tres municipios y tiene un control político histórico de la región. Las 47 denuncias fueron coordinadas y organizadas por la coalición opositora, lo que puede ser un elemento a considerar al valorar la sistematicidad de la denuncia, aunque no invalida el contenido de las mismas. El INE, a través de su Junta Local Ejecutiva en Chiapas, ha señalado en un comunicado interno que la competencia sancionadora en materia de programas sociales de origen estatal recae en el IEPC conforme al artículo 25 del Código Electoral de Chiapas. Los medios locales tienen amplia cobertura del caso y hay presión pública para que el IEPC actúe con rapidez. Los plazos electorales son estrechos y la resolución de un procedimiento sancionador de esta magnitud podría extenderse más allá del día de la elección.`,
+    pregunta: `Como Consejero Electoral del IEPC, analice integralmente la denuncia de uso indebido de programas sociales de origen estatal con fines electorales, identifique el marco legal aplicable —incluyendo la Ley General en Materia de Delitos Electorales, el Código Electoral de Chiapas y los criterios del TEPJF sobre equidad en la contienda—, evalúe el valor probatorio de las pruebas presentadas y los riesgos que esta situación representa para la equidad de la contienda y la validez de la elección, y proponga la ruta completa del procedimiento administrativo sancionador que corresponde iniciar, incluyendo medidas cautelares, plazos procesales, coordinación interinstitucional y posibles sanciones aplicables.`
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// ESTADO DE LA APLICACIÓN
+// ══════════════════════════════════════════════════════
+let estado = {
+  mocionesRestantes: [],
+  mocionActual: null,
+  indiceActual: 0,
+  totalEnsayos: 10,
+  cronometroInterval: null,
+  segundosRestantes: 10800,
+  tiempoInicioEnsayo: null,
+  sesionActiva: false
+};
+
+// ══════════════════════════════════════════════════════
+// ACCESO
+// ══════════════════════════════════════════════════════
+function verificarAcceso() {
+  const clave = document.getElementById('input-clave').value.trim();
+  if (clave === CLAVE_ACCESO) {
+    document.getElementById('pantalla-acceso').style.display = 'none';
+    document.getElementById('pantalla-inicio').style.display = 'block';
+    cargarEstadisticas();
+    cargarHistorial();
+  } else {
+    document.getElementById('error-clave').style.display = 'block';
+    document.getElementById('input-clave').style.borderColor = 'var(--rojo)';
+    setTimeout(() => {
+      document.getElementById('input-clave').style.borderColor = '';
+    }, 1500);
+  }
+}
+
+document.getElementById('input-clave').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') verificarAcceso();
+});
+
+// ══════════════════════════════════════════════════════
+// ESTADÍSTICAS E HISTORIAL
+// ══════════════════════════════════════════════════════
+function cargarEstadisticas() {
+  const stats = JSON.parse(localStorage.getItem('iepc_stats') || '{"sesiones":0,"ensayos":0,"tiempoTotal":0,"ultima":"—"}');
+  document.getElementById('stat-sesiones').textContent = stats.sesiones;
+  document.getElementById('stat-ensayos').textContent = stats.ensayos;
+  document.getElementById('stat-tiempo').textContent = formatearTiempo(stats.tiempoTotal || 0);
+  document.getElementById('stat-ultima').textContent = stats.ultima || '—';
+}
+
+function cargarHistorial() {
+  const historial = JSON.parse(localStorage.getItem('iepc_historial') || '[]');
+  const lista = document.getElementById('historial-lista');
+  if (historial.length === 0) {
+    lista.innerHTML = '<div class="historial-empty">Aún no has realizado ningún ensayo en este dispositivo.</div>';
+    return;
+  }
+  lista.innerHTML = historial.slice(-10).reverse().map(item => `
+    <div class="historial-item">
+      <span class="historial-fecha">${item.fecha}</span>
+      <span class="historial-problema">${item.problema}</span>
+      <span class="historial-calif cal-${item.calificacion}">${item.calificacion} · ${item.puntaje} pts</span>
+      <span style="font-size:0.75rem; color:var(--texto-suave);">${formatearTiempo(item.duracion)}</span>
+    </div>
+  `).join('');
+}
+
+function guardarEnHistorial(mocion, calificacion, puntaje, duracion) {
+  const historial = JSON.parse(localStorage.getItem('iepc_historial') || '[]');
+  historial.push({
+    fecha: new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }),
+    problema: mocion.titulo.substring(0, 50) + '…',
+    calificacion,
+    puntaje,
+    duracion
+  });
+  localStorage.setItem('iepc_historial', JSON.stringify(historial));
+
+  const stats = JSON.parse(localStorage.getItem('iepc_stats') || '{"sesiones":0,"ensayos":0,"tiempoTotal":0,"ultima":"—"}');
+  stats.ensayos = (stats.ensayos || 0) + 1;
+  stats.tiempoTotal = (stats.tiempoTotal || 0) + duracion;
+  stats.ultima = calificacion;
+  localStorage.setItem('iepc_stats', JSON.stringify(stats));
+}
+
+// ══════════════════════════════════════════════════════
+// INICIO DE SESIÓN
+// ══════════════════════════════════════════════════════
+function iniciarSesion() {
+  // Mezclar mociones aleatoriamente
+  estado.mocionesRestantes = [...MOCIONES].sort(() => Math.random() - 0.5);
+  estado.indiceActual = 0;
+  estado.sesionActiva = true;
+
+  // Actualizar contador de sesiones
+  const stats = JSON.parse(localStorage.getItem('iepc_stats') || '{"sesiones":0,"ensayos":0,"tiempoTotal":0,"ultima":"—"}');
+  stats.sesiones = (stats.sesiones || 0) + 1;
+  localStorage.setItem('iepc_stats', JSON.stringify(stats));
+
+  mostrarSiguienteMocion();
+}
+
+function mostrarSiguienteMocion() {
+  if (estado.indiceActual >= estado.mocionesRestantes.length) {
+    alert('¡Felicidades! Has completado todos los ejercicios de esta sesión.');
+    volverInicio();
+    return;
+  }
+
+  estado.mocionActual = estado.mocionesRestantes[estado.indiceActual];
+  estado.segundosRestantes = 10800;
+  estado.tiempoInicioEnsayo = Date.now();
+
+  // Llenar la moción
+  document.getElementById('mocion-categoria').textContent = estado.mocionActual.categoria;
+  document.getElementById('mocion-texto-principal').textContent = estado.mocionActual.texto;
+  document.getElementById('mocion-contexto').textContent = estado.mocionActual.contexto;
+  document.getElementById('mocion-pregunta').textContent = estado.mocionActual.pregunta;
+  document.getElementById('contador-ejercicio').textContent = `Ejercicio ${estado.indiceActual + 1} de ${estado.mocionesRestantes.length}`;
+
+  // Limpiar editor
+  document.getElementById('editor-ensayo').value = '';
+  document.getElementById('contador-palabras').textContent = '0 / 750–1,000 palabras';
+  document.getElementById('contador-palabras').className = 'contador-palabras palabras-bajo';
+  document.getElementById('barra-fill').style.width = '0%';
+  document.getElementById('btn-terminar').disabled = true;
+
+  // Mostrar pantalla
+  document.getElementById('pantalla-inicio').style.display = 'none';
+  document.getElementById('pantalla-evaluacion').style.display = 'none';
+  document.getElementById('pantalla-ensayo').style.display = 'block';
+
+  // Iniciar cronómetro
+  iniciarCronometro();
+}
+
+// ══════════════════════════════════════════════════════
+// CRONÓMETRO
+// ══════════════════════════════════════════════════════
+function iniciarCronometro() {
+  if (estado.cronometroInterval) clearInterval(estado.cronometroInterval);
+  actualizarDisplayCronometro();
+  estado.cronometroInterval = setInterval(() => {
+    estado.segundosRestantes--;
+    actualizarDisplayCronometro();
+    if (estado.segundosRestantes <= 0) {
+      clearInterval(estado.cronometroInterval);
+      alert('El tiempo ha concluido. Se enviará su ensayo para evaluación.');
+      terminarEnsayo();
+    }
+  }, 1000);
+}
+
+function actualizarDisplayCronometro() {
+  const h = Math.floor(estado.segundosRestantes / 3600);
+  const m = Math.floor((estado.segundosRestantes % 3600) / 60);
+  const s = estado.segundosRestantes % 60;
+  const display = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('cronometro');
+  el.textContent = display;
+  el.className = 'cronometro-display';
+  if (estado.segundosRestantes <= 600) el.classList.add('urgente');
+  else if (estado.segundosRestantes <= 1800) el.classList.add('advertencia');
+}
+
+function formatearTiempo(segundos) {
+  const h = Math.floor(segundos / 3600);
+  const m = Math.floor((segundos % 3600) / 60);
+  const s = segundos % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ══════════════════════════════════════════════════════
+// CONTADOR DE PALABRAS
+// ══════════════════════════════════════════════════════
+function actualizarContador() {
+  const texto = document.getElementById('editor-ensayo').value.trim();
+  const palabras = texto ? texto.split(/\s+/).filter(p => p.length > 0).length : 0;
+  const contadorEl = document.getElementById('contador-palabras');
+  const barraEl = document.getElementById('barra-fill');
+  const btnTerminar = document.getElementById('btn-terminar');
+
+  contadorEl.textContent = `${palabras} / 750–1,000 palabras`;
+
+  const porcentaje = Math.min((palabras / 1000) * 100, 100);
+  barraEl.style.width = porcentaje + '%';
+
+  if (palabras >= 750 && palabras <= 1000) {
+    contadorEl.className = 'contador-palabras palabras-ok';
+    barraEl.style.background = 'var(--verde-claro)';
+    btnTerminar.disabled = false;
+  } else if (palabras > 1000) {
+    contadorEl.className = 'contador-palabras palabras-exceso';
+    barraEl.style.background = 'var(--rojo)';
+    btnTerminar.disabled = true;
+  } else {
+    contadorEl.className = 'contador-palabras palabras-bajo';
+    barraEl.style.background = palabras > 500 ? 'var(--oro)' : 'var(--crema-oscuro)';
+    btnTerminar.disabled = true;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// TERMINAR ENSAYO Y EVALUAR
+// ══════════════════════════════════════════════════════
+function terminarEnsayo() {
+  if (estado.cronometroInterval) clearInterval(estado.cronometroInterval);
+
+  const ensayo = document.getElementById('editor-ensayo').value.trim();
+  const duracion = Math.floor((Date.now() - estado.tiempoInicioEnsayo) / 1000);
+
+  document.getElementById('pantalla-ensayo').style.display = 'none';
+  document.getElementById('pantalla-evaluacion').style.display = 'block';
+  document.getElementById('loading-ev').style.display = 'block';
+  document.getElementById('resultado-ev').classList.add('hidden');
+
+  // Scroll al inicio
+  window.scrollTo(0, 0);
+
+  evaluarConGemini(ensayo, estado.mocionActual, duracion);
+}
+
+// ══════════════════════════════════════════════════════
+// EVALUACIÓN CON GEMINI
+// ══════════════════════════════════════════════════════
+async function evaluarConGemini(ensayo, mocion, duracion) {
+  const prompt = `Eres un dictaminador académico experto del Colegio de México (COLMEX), con amplia experiencia en derecho electoral mexicano, gobernanza democrática y evaluación de competencias institucionales. Has sido comisionado por el INE para evaluar ensayos de aspirantes a Consejería Electoral del IEPC Chiapas en el proceso de selección y designación 2026.
+
+Tu evaluación debe ser rigurosa, didáctica y fundamentada. Debes evaluar el ensayo conforme a los CINCO criterios oficiales establecidos por el COLMEX:
+
+CRITERIO 1 — Definición y delimitación del problema central (máximo 15 puntos)
+CRITERIO 2 — Identificación de actores relevantes y escenarios posibles (máximo 20 puntos)
+CRITERIO 3 — Propuestas y estrategias específicas con fundamentación jurídica (máximo 25 puntos)
+CRITERIO 4 — Ruta de acción dentro del marco legal y comunicación institucional (máximo 30 puntos)
+CRITERIO 5 — Calidad de redacción, ortografía y sintaxis (máximo 10 puntos)
+
+MOCIÓN PRESENTADA AL ASPIRANTE:
+${mocion.texto}
+
+CONTEXTO:
+${mocion.contexto}
+
+PREGUNTA:
+${mocion.pregunta}
+
+ENSAYO DEL ASPIRANTE:
+${ensayo}
+
+Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto adicional, sin markdown, sin explicaciones fuera del JSON):
+{
+  "c1": <número entre 0 y 15>,
+  "c2": <número entre 0 y 20>,
+  "c3": <número entre 0 y 25>,
+  "c4": <número entre 0 y 30>,
+  "c5": <número entre 0 y 10>,
+  "total": <suma de los 5 criterios>,
+  "letra": "<A, B o C según el puntaje total>",
+  "estado": "<Ensayo idóneo - Tipo A, Ensayo idóneo - Tipo B, o Ensayo no idóneo - Tipo C>",
+  "fortalezas": "<Párrafo de 3-4 oraciones describiendo con detalle académico los puntos fuertes del ensayo>",
+  "debilidades": "<Párrafo de 3-4 oraciones describiendo con precisión las áreas de oportunidad y errores identificados>",
+  "criterio1_comentario": "<Comentario específico sobre la definición del problema, 2-3 oraciones>",
+  "criterio2_comentario": "<Comentario sobre la identificación de actores y escenarios, 2-3 oraciones>",
+  "criterio3_comentario": "<Comentario sobre las propuestas y su fundamentación jurídica, 2-3 oraciones>",
+  "criterio4_comentario": "<Comentario sobre la ruta de acción propuesta, 2-3 oraciones>",
+  "criterio5_comentario": "<Comentario sobre redacción, ortografía y sintaxis, 1-2 oraciones>",
+  "recomendacion_final": "<Recomendación académica personalizada de 4-5 oraciones para mejorar el ensayo, escrita en tono de mentor académico del COLMEX, haciendo referencia explícita al contexto chiapaneco y al marco legal electoral vigente en México>"
+}`;
+
+  try {
+    const response = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 2048
+        }
+      })
+    });
+
+    const data = await response.json();
+    let texto = data.candidates[0].content.parts[0].text.trim();
+
+    // Limpiar posibles backticks de markdown
+    texto = texto.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+    const resultado = JSON.parse(texto);
+    mostrarResultado(resultado, mocion, duracion);
+
+  } catch (error) {
+    console.error('Error Gemini:', error);
+    document.getElementById('loading-ev').style.display = 'none';
+    document.getElementById('resultado-ev').classList.remove('hidden');
+    document.getElementById('loading-ev').innerHTML = '';
+
+    // Mostrar error claro al usuario
+    document.querySelector('.calificacion-principal').innerHTML = `
+      <div style="text-align:center; padding: 1rem;">
+        <div style="font-size:2rem; color:#ff8080; margin-bottom:0.75rem;">⚠</div>
+        <div style="font-family:'JetBrains Mono',monospace; color:var(--oro-claro); font-size:0.9rem; margin-bottom:0.5rem;">Error de conexión con el evaluador</div>
+        <div style="color:rgba(255,255,255,0.6); font-size:0.8rem; font-style:italic;">Verifica tu conexión a internet e intenta de nuevo</div>
+      </div>
+    `;
+    document.getElementById('criterios-detalle').innerHTML = `
+      <div style="grid-column:1/-1; padding:1.5rem; text-align:center; color:var(--texto-suave); font-style:italic; font-size:0.9rem;">
+        No fue posible obtener la evaluación de Gemini. Por favor recarga la página e inténtalo nuevamente. Si el problema persiste, verifica que la API key sea válida y que tengas acceso a internet.
+      </div>
+    `;
+    document.getElementById('retroalimentacion-texto').innerHTML = '';
+    document.getElementById('ensayo-preview').textContent = document.getElementById('editor-ensayo').value;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// MOSTRAR RESULTADO
+// ══════════════════════════════════════════════════════
+function mostrarResultado(resultado, mocion, duracion) {
+  document.getElementById('loading-ev').style.display = 'none';
+  document.getElementById('resultado-ev').classList.remove('hidden');
+
+  // Letra y puntaje
+  const letraEl = document.getElementById('letra-cal');
+  letraEl.textContent = resultado.letra;
+  letraEl.className = `letra-calificacion letra-${resultado.letra}`;
+
+  document.getElementById('numero-cal').textContent = `${resultado.total} / 100`;
+
+  const estadoEl = document.getElementById('estado-cal');
+  estadoEl.textContent = resultado.estado;
+  estadoEl.className = `calificacion-estado ${resultado.letra === 'C' ? 'estado-no-idoneo' : 'estado-idoneo'}`;
+
+  // Criterios detalle
+  const maxPuntos = [15, 20, 25, 30, 10];
+  const nombresCriterios = [
+    'Definición del problema',
+    'Actores y escenarios',
+    'Propuestas y estrategias',
+    'Ruta de acción',
+    'Redacción y ortografía'
+  ];
+  const puntajes = [resultado.c1, resultado.c2, resultado.c3, resultado.c4, resultado.c5];
+  const comentarios = [
+    resultado.criterio1_comentario,
+    resultado.criterio2_comentario,
+    resultado.criterio3_comentario,
+    resultado.criterio4_comentario,
+    resultado.criterio5_comentario
+  ];
+
+  document.getElementById('criterios-detalle').innerHTML = puntajes.map((pts, i) => {
+    const porcentaje = (pts / maxPuntos[i]) * 100;
+    const color = porcentaje >= 70 ? 'var(--verde-claro)' : porcentaje >= 50 ? 'var(--oro)' : 'var(--rojo)';
+    return `
+      <div class="criterio-puntaje">
+        <div class="criterio-puntaje-titulo">${nombresCriterios[i]}</div>
+        <div class="criterio-puntaje-barra">
+          <div class="criterio-puntaje-fill" style="width:${porcentaje}%; background:${color};"></div>
+        </div>
+        <div class="criterio-puntaje-num">${pts} / ${maxPuntos[i]} pts</div>
+        <div style="font-size:0.75rem; color:var(--texto-suave); margin-top:0.35rem; line-height:1.5;">${comentarios[i]}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Preview del ensayo
+  document.getElementById('ensayo-preview').textContent = document.getElementById('editor-ensayo').value;
+
+  // Retroalimentación
+  document.getElementById('retroalimentacion-texto').innerHTML = `
+    <h3>Fortalezas del ensayo</h3>
+    <p>${resultado.fortalezas}</p>
+    <h3>Áreas de oportunidad</h3>
+    <p>${resultado.debilidades}</p>
+    <h3>Recomendación académica</h3>
+    <p>${resultado.recomendacion_final}</p>
+  `;
+
+  // Botón siguiente
+  const btnSiguiente = document.getElementById('btn-siguiente-ensayo');
+  if (estado.indiceActual + 1 >= estado.mocionesRestantes.length) {
+    btnSiguiente.textContent = 'Finalizar sesión';
+  } else {
+    btnSiguiente.textContent = `Siguiente ejercicio (${estado.indiceActual + 2} de ${estado.mocionesRestantes.length}) →`;
+  }
+
+  // Guardar en historial
+  guardarEnHistorial(mocion, resultado.letra, resultado.total, duracion);
+
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════════════
+function siguienteEnsayo() {
+  estado.indiceActual++;
+  if (estado.indiceActual >= estado.mocionesRestantes.length) {
+    volverInicio();
+  } else {
+    mostrarSiguienteMocion();
+  }
+}
+
+function volverInicio() {
+  if (estado.cronometroInterval) clearInterval(estado.cronometroInterval);
+  document.getElementById('pantalla-ensayo').style.display = 'none';
+  document.getElementById('pantalla-evaluacion').style.display = 'none';
+  document.getElementById('pantalla-inicio').style.display = 'block';
+  cargarEstadisticas();
+  cargarHistorial();
+  window.scrollTo(0, 0);
+}
+
+// Inicialización
+window.onload = function() {
+  // Nada que hacer, esperar acceso
+};
+</script>
+</body>
+</html>
