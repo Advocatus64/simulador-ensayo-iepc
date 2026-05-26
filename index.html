@@ -1581,6 +1581,13 @@ function terminarEnsayo() {
 async function evaluarConGemini(ensayo, mocion, duracion) {
   const prompt = `Eres un dictaminador académico experto del Colegio de México (COLMEX), con amplia experiencia en derecho electoral mexicano, gobernanza democrática y evaluación de competencias institucionales. Has sido comisionado por el INE para evaluar ensayos de aspirantes a Consejería Electoral del IEPC Chiapas en el proceso de selección y designación 2026.
 
+INSTRUCCIONES TÉCNICAS IMPORTANTES:
+- Responde ÚNICAMENTE con JSON válido, sin texto adicional antes o después
+- NO uses comillas tipográficas (", ", ', '). USA SOLO comillas rectas estándar (")
+- NO uses caracteres especiales como tildes dentro de las claves del JSON
+- Para el texto en español dentro de los valores, puedes usar tildes normalmente
+- Asegúrate de que todos los strings estén correctamente cerrados con comillas rectas
+
 Tu evaluación debe ser rigurosa, didáctica y fundamentada. Debes evaluar el ensayo conforme a los CINCO criterios oficiales establecidos por el COLMEX:
 
 CRITERIO 1 — Definición y delimitación del problema central (máximo 15 puntos)
