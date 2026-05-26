@@ -1277,7 +1277,7 @@ body {
 // ══════════════════════════════════════════════════════
 const CLAVE_ACCESO = 'IEPC2026';
 const GEMINI_KEY = atob('QUl6YVN5RHIzSlRWbDR2VGEtbjlwQ21IQ3haTWktQ1ZjMDlMSk5B');
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
 // ══════════════════════════════════════════════════════
 // BANCO DE 10 MOCIONES — NIVEL 3 CHIAPAS
@@ -1629,7 +1629,7 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 2048
+          maxOutputTokens: 4096
         }
       })
     });
@@ -1645,6 +1645,16 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
 
     // Limpiar posibles backticks de markdown
     texto = texto.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    // Si el JSON está incompleto, intentar repararlo
+    if (!texto.endsWith('}')) {
+      const ultimaLlave = texto.lastIndexOf(',"recomendacion_final"');
+      if (ultimaLlave > 0) {
+        texto = texto.substring(0, ultimaLlave) + ',"recomendacion_final":"Continúe practicando para mejorar su desempeño en el ensayo."}';
+      } else {
+        texto = texto + '""}';
+      }
+    }
 
     const resultado = JSON.parse(texto);
     mostrarResultado(resultado, mocion, duracion);
