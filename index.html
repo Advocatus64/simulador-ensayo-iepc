@@ -1822,9 +1822,9 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
   "c3": <número entre 0 y 25>,
   "c4": <número entre 0 y 30>,
   "c5": <número entre 0 y 10>,
-  "total": <suma de los 5 criterios>,
-  "letra": "<A, B o C según el puntaje total>",
-  "estado": "<Ensayo idóneo - Tipo A, Ensayo idóneo - Tipo B, o Ensayo no idóneo - Tipo C>",
+  "total": <suma exacta de c1+c2+c3+c4+c5>,
+  "letra": "<REGLA ESTRICTA: si total es 75 o más = A, si total es entre 50 y 74 = B, si total es 49 o menos = C>",
+  "estado": "<REGLA ESTRICTA: si total >= 75 escribe 'Ensayo idóneo - Tipo A', si total entre 50-74 escribe 'Ensayo idóneo - Tipo B', si total <= 49 escribe 'Ensayo no idóneo - Tipo C'>",
   "fortalezas": "<Párrafo de 3-4 oraciones describiendo con detalle académico los puntos fuertes del ensayo>",
   "debilidades": "<Párrafo de 3-4 oraciones describiendo con precisión las áreas de oportunidad y errores identificados>",
   "criterio1_comentario": "<Comentario específico sobre la definición del problema, 2-3 oraciones>",
@@ -1931,6 +1931,19 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
 // MOSTRAR RESULTADO
 // ══════════════════════════════════════════════════════
 function mostrarResultado(resultado, mocion, duracion) {
+  // Corrección automática de letra y estado según escala oficial COLMEX
+  const total = resultado.total || (resultado.c1 + resultado.c2 + resultado.c3 + resultado.c4 + resultado.c5);
+  resultado.total = total;
+  if (total >= 75) {
+    resultado.letra = 'A';
+    resultado.estado = 'Ensayo idóneo - Tipo A';
+  } else if (total >= 50) {
+    resultado.letra = 'B';
+    resultado.estado = 'Ensayo idóneo - Tipo B';
+  } else {
+    resultado.letra = 'C';
+    resultado.estado = 'Ensayo no idóneo - Tipo C';
+  }
   document.getElementById('loading-ev').style.display = 'none';
   document.getElementById('resultado-ev').classList.remove('hidden');
 
