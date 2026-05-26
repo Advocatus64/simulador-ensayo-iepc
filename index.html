@@ -1277,7 +1277,7 @@ body {
 // ══════════════════════════════════════════════════════
 const CLAVE_ACCESO = 'IEPC2026';
 const GEMINI_KEY = atob('QUl6YVN5RHIzSlRWbDR2VGEtbjlwQ21IQ3haTWktQ1ZjMDlMSk5B');
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_KEY}`;
 
 // ══════════════════════════════════════════════════════
 // BANCO DE 10 MOCIONES — NIVEL 3 CHIAPAS
@@ -1635,6 +1635,12 @@ Responde ÚNICAMENTE con un objeto JSON con esta estructura exacta (sin texto ad
     });
 
     const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('Gemini error response:', JSON.stringify(data));
+      throw new Error(`HTTP ${response.status}: ${data?.error?.message || 'Error desconocido'}`);
+    }
+    
     let texto = data.candidates[0].content.parts[0].text.trim();
 
     // Limpiar posibles backticks de markdown
